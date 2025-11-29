@@ -1,0 +1,341 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Главная - ShopExpress{% endblock %}
+
+{% block content %}
+
+<!-- Banner Slider -->
+{% if banners %}
+<section class="banner-section">
+    <div class="container">
+        <div class="banner-slider">
+            {% for banner in banners %}
+            <div class="banner-slide">
+                {% if banner.link %}
+                <a href="{{ banner.link }}">
+                {% endif %}
+                    <img src="{{ banner.image.url }}" alt="{{ banner.title }}" loading="lazy">
+                    <div class="banner-content">
+                        {% if banner.title %}
+                        <h2>{{ banner.title }}</h2>
+                        {% endif %}
+                        {% if banner.description %}
+                        <p>{{ banner.description }}</p>
+                        {% endif %}
+                    </div>
+                {% if banner.link %}
+                </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Categories -->
+<section class="categories-section">
+    <div class="container">
+        <h2 class="section-title">Категории товаров</h2>
+        <div class="categories-grid">
+            {% for category in categories %}
+            {% if category.slug %}
+            <a href="{% url 'product_list' category.slug %}" class="category-card">
+                {% if category.image %}
+                <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                {% else %}
+                <div class="category-placeholder">
+                    <i class="fas fa-box"></i>
+                </div>
+                {% endif %}
+                <h3>{{ category.name }}</h3>
+            </a>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Currently Popular -->
+{% if featured_products %}
+<section class="products-section">
+    <div class="container">
+        <h2 class="section-title">Сейчас популярно</h2>
+        <div class="products-grid">
+            {% for product in featured_products|slice:":6" %}
+            {% if product.slug %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' product.slug %}">
+                    <div class="product-image">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="product-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        {% endif %}
+                        {% if product.discount_percent %}
+                        <span class="discount-badge">-{{ product.discount_percent }}%</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name|truncatewords:8 }}</h3>
+                        <div class="product-rating">
+                            <span class="stars">★</span>
+                            <span class="rating-value">{{ product.rating }}</span>
+                            <span class="rating-text">({{ product.reviews_count }})</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">{{ product.price }}₽</span>
+                            {% if product.old_price %}
+                            <span class="old-price">{{ product.old_price }}₽</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                <button class="btn-add-cart" data-product-id="{{ product.id }}">
+                    <i class="fas fa-shopping-cart"></i> В корзину
+                </button>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Bestsellers -->
+{% if bestsellers %}
+<section class="products-section">
+    <div class="container">
+        <h2 class="section-title">Хиты продаж</h2>
+        <div class="products-grid">
+            {% for product in bestsellers|slice:":6" %}
+            {% if product.slug %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' product.slug %}">
+                    <div class="product-image">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        {% else %}
+                        <div class="product-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        {% endif %}
+                        {% if product.discount_percent %}
+                        <span class="discount-badge">-{{ product.discount_percent }}%</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name|truncatewords:8 }}</h3>
+                        <div class="product-rating">
+                            <span class="stars">★</span>
+                            <span class="rating-value">{{ product.rating }}</span>
+                            <span class="rating-text">({{ product.reviews_count }})</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">{{ product.price }}₽</span>
+                            {% if product.old_price %}
+                            <span class="old-price">{{ product.old_price }}₽</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                <button class="btn-add-cart" data-product-id="{{ product.id }}">
+                    <i class="fas fa-shopping-cart"></i> В корзину
+                </button>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Latest Products -->
+{% if latest_products %}
+<section class="products-section">
+    <div class="container">
+        <h2 class="section-title">Новинки</h2>
+        <div class="products-grid">
+            {% for product in latest_products %}
+            {% if product.slug %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' product.slug %}">
+                    <div class="product-image">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        {% else %}
+                        <div class="product-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        {% endif %}
+                        {% if product.discount_percent %}
+                        <span class="discount-badge">-{{ product.discount_percent }}%</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name|truncatewords:8 }}</h3>
+                        <div class="product-rating">
+                            <span class="stars">★</span>
+                            <span class="rating-value">{{ product.rating }}</span>
+                            <span class="rating-text">({{ product.reviews_count }})</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">{{ product.price }}₽</span>
+                            {% if product.old_price %}
+                            <span class="old-price">{{ product.old_price }}₽</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                <button class="btn-add-cart" data-product-id="{{ product.id }}">
+                    <i class="fas fa-shopping-cart"></i> В корзину
+                </button>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Advantages -->
+{% if advantages %}
+<section class="advantages-section">
+    <div class="container">
+        <h2 class="section-title">Почему выбирают нас?</h2>
+        <div class="advantages-grid">
+            {% for advantage in advantages %}
+            <div class="advantage-card">
+                <div class="advantage-icon">
+                    <i class="{{ advantage.icon|default:'fas fa-star' }}"></i>
+                </div>
+                <h3>{{ advantage.title }}</h3>
+                <p>{{ advantage.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Sponsors -->
+{% if sponsors %}
+<section class="sponsors-section">
+    <div class="container">
+        <h2 class="section-title">Наши партнеры</h2>
+        <div class="sponsors-carousel">
+            {% for sponsor in sponsors %}
+            <div class="sponsor-item">
+                {% if sponsor.website %}
+                <a href="{{ sponsor.website }}" target="_blank" rel="noopener">
+                {% endif %}
+                    <img src="{{ sponsor.logo.url }}" alt="{{ sponsor.name }}" loading="lazy">
+                {% if sponsor.website %}
+                </a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- FAQ Section -->
+{% if faqs %}
+<section class="faq-section">
+    <div class="container">
+        <h2 class="section-title">Часто задаваемые вопросы</h2>
+        <div class="faq-list">
+            {% for faq in faqs %}
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>{{ faq.question }}</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>{{ faq.answer }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="faq-more">
+            <a href="{% url 'faq' %}" class="btn btn-primary">Все вопросы</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    function initFAQ() {
+        const faqItems = document.querySelectorAll('.faq-item');
+        if (faqItems.length === 0) return;
+        
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            if (!question) return;
+            
+            const answer = item.querySelector('.faq-answer');
+            const icon = question.querySelector('i');
+            
+            // Убеждаемся, что ответ изначально скрыт
+            if (answer && !item.classList.contains('active')) {
+                answer.style.maxHeight = '0';
+            }
+            
+            question.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isActive = item.classList.contains('active');
+                
+                // Закрываем все остальные
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                        const otherAnswer = otherItem.querySelector('.faq-answer');
+                        const otherIcon = otherItem.querySelector('.faq-question i');
+                        if (otherAnswer) {
+                            otherAnswer.style.maxHeight = '0';
+                            otherAnswer.style.padding = '0 20px';
+                        }
+                        if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+                    }
+                });
+                
+                // Переключаем текущий
+                if (isActive) {
+                    item.classList.remove('active');
+                    if (answer) {
+                        answer.style.maxHeight = '0';
+                        answer.style.padding = '0 20px';
+                    }
+                    if (icon) icon.style.transform = 'rotate(0deg)';
+                } else {
+                    item.classList.add('active');
+                    if (answer) {
+                        answer.style.padding = '20px';
+                        answer.style.maxHeight = answer.scrollHeight + 'px';
+                    }
+                    if (icon) icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+    }
+    
+    // Инициализация при загрузке DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initFAQ);
+    } else {
+        initFAQ();
+    }
+})();
+</script>
+{% endblock %}
+

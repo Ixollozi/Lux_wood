@@ -1,0 +1,338 @@
+{% extends "admin/index.html" %}
+{% load static %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-wrapper">
+        <!-- Скрываем стандартный заголовок Django и принудительно показываем sidebar -->
+        <style>
+            #content > h1 { display: none; }
+            .dashboard-container .module { display: none; }
+            
+            /* Принудительно показываем sidebar на главной странице */
+            #nav-sidebar {
+                display: block !important;
+                visibility: visible !important;
+            }
+            
+            #nav-sidebar.collapsed {
+                display: none !important;
+            }
+            
+            body.sticky-enabled #content,
+            body.dashboard-page #content {
+                margin-left: 280px !important;
+            }
+        </style>
+        
+        <!-- Кнопки быстрых действий -->
+        <div class="quick-actions-row">
+            <a href="{% url 'admin:store_product_add' %}" class="quick-action-btn-blue">Добавить товар</a>
+            <a href="{% url 'admin:store_category_add' %}" class="quick-action-btn-blue">Добавить категорию</a>
+            <a href="{% url 'admin:store_banner_add' %}" class="quick-action-btn-blue">Добавить баннер</a>
+            <a href="{% url 'admin:store_sponsor_add' %}" class="quick-action-btn-blue">Добавить спонсора</a>
+        </div>
+
+        <!-- Карточки статистики -->
+        <div class="stats-cards-row">
+            <div class="stat-card-photo">
+                <div class="stat-card-header-photo">
+                    <span class="stat-card-title-photo">Товары</span>
+                </div>
+                <div class="stat-card-body-photo">
+                    <div class="stat-value-photo">{{ total_products|default:0 }}</div>
+                    <a href="{% url 'admin:store_product_changelist' %}" class="stat-card-button-photo">ОТКРЫТЬ</a>
+                </div>
+            </div>
+            
+            <div class="stat-card-photo">
+                <div class="stat-card-header-photo">
+                    <span class="stat-card-title-photo">Заказы</span>
+                </div>
+                <div class="stat-card-body-photo">
+                    <div class="stat-value-photo">{{ total_orders|default:0 }}</div>
+                    <a href="{% url 'admin:store_order_changelist' %}" class="stat-card-button-photo">ОТКРЫТЬ</a>
+                </div>
+            </div>
+            
+            <div class="stat-card-photo">
+                <div class="stat-card-header-photo">
+                    <span class="stat-card-title-photo">Сообщения</span>
+                </div>
+                <div class="stat-card-body-photo">
+                    <div class="stat-value-photo">{{ unread_messages|default:0 }}</div>
+                    <a href="{% url 'admin:store_contactmessage_changelist' %}" class="stat-card-button-photo">ОТКРЫТЬ</a>
+                </div>
+            </div>
+            
+            <div class="stat-card-photo">
+                <div class="stat-card-header-photo">
+                    <span class="stat-card-title-photo">Категории</span>
+                </div>
+                <div class="stat-card-body-photo">
+                    <div class="stat-value-photo">{{ total_categories|default:0 }}</div>
+                    <a href="{% url 'admin:store_category_changelist' %}" class="stat-card-button-photo">ОТКРЫТЬ</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Второй ряд карточек статистики -->
+        <div class="stats-cards-row">
+            <div class="stat-card-photo">
+                <div class="stat-card-header-photo">
+                    <span class="stat-card-title-photo">Баннеры</span>
+                </div>
+                <div class="stat-card-body-photo">
+                    <div class="stat-value-photo">{{ total_banners|default:0 }}</div>
+                    <a href="{% url 'admin:store_banner_changelist' %}" class="stat-card-button-photo">ОТКРЫТЬ</a>
+                </div>
+            </div>
+            
+            <div class="stat-card-photo">
+                <div class="stat-card-header-photo">
+                    <span class="stat-card-title-photo">Спонсоры</span>
+                </div>
+                <div class="stat-card-body-photo">
+                    <div class="stat-value-photo">{{ total_sponsors|default:0 }}</div>
+                    <a href="{% url 'admin:store_sponsor_changelist' %}" class="stat-card-button-photo">ОТКРЫТЬ</a>
+                </div>
+            </div>
+            
+            <div class="stat-card-photo">
+                <div class="stat-card-header-photo">
+                    <span class="stat-card-title-photo">FAQ</span>
+                </div>
+                <div class="stat-card-body-photo">
+                    <div class="stat-value-photo">{{ total_faqs|default:0 }}</div>
+                    <a href="{% url 'admin:store_faq_changelist' %}" class="stat-card-button-photo">ОТКРЫТЬ</a>
+                </div>
+            </div>
+            
+            <div class="stat-card-photo">
+                <div class="stat-card-header-photo">
+                    <span class="stat-card-title-photo">Преимущества</span>
+                </div>
+                <div class="stat-card-body-photo">
+                    <div class="stat-value-photo">{{ total_advantages|default:0 }}</div>
+                    <a href="{% url 'admin:store_advantage_changelist' %}" class="stat-card-button-photo">ОТКРЫТЬ</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Второй ряд карточек - Последние заказы и Последние сообщения -->
+        <div class="latest-cards-row">
+            <div class="latest-card-photo">
+                <div class="latest-card-header-photo">
+                    <span class="latest-card-title-photo">Последние заказы</span>
+                </div>
+                <div class="latest-card-body-photo">
+                    {% if recent_orders %}
+                        <ul class="latest-list-photo">
+                            {% for order in recent_orders %}
+                            <li class="latest-list-item-photo">
+                                <a href="{% url 'admin:store_order_change' order.id %}">
+                                    Заказ #{{ order.id }} - {{ order.first_name }} {{ order.last_name }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="latest-empty-photo">• Нет данных</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="latest-card-photo">
+                <div class="latest-card-header-photo">
+                    <span class="latest-card-title-photo">Последние сообщения</span>
+                </div>
+                <div class="latest-card-body-photo">
+                    {% if recent_messages %}
+                        <ul class="latest-list-photo">
+                            {% for message in recent_messages %}
+                            <li class="latest-list-item-photo">
+                                <a href="{% url 'admin:store_contactmessage_change' message.id %}">
+                                    {{ message.subject }} #{{ message.id }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="latest-empty-photo">• Нет данных</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Третий ряд карточек - Последние товары и Последние категории -->
+        <div class="latest-cards-row">
+            <div class="latest-card-photo">
+                <div class="latest-card-header-photo">
+                    <span class="latest-card-title-photo">Последние товары</span>
+                </div>
+                <div class="latest-card-body-photo">
+                    {% if recent_products %}
+                        <ul class="latest-list-photo">
+                            {% for product in recent_products %}
+                            <li class="latest-list-item-photo">
+                                <a href="{% url 'admin:store_product_change' product.id %}">
+                                    {{ product.name }} #{{ product.id }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="latest-empty-photo">• Нет данных</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="latest-card-photo">
+                <div class="latest-card-header-photo">
+                    <span class="latest-card-title-photo">Последние категории</span>
+                </div>
+                <div class="latest-card-body-photo">
+                    {% if recent_categories %}
+                        <ul class="latest-list-photo">
+                            {% for category in recent_categories %}
+                            <li class="latest-list-item-photo">
+                                <a href="{% url 'admin:store_category_change' category.id %}">
+                                    {{ category.name }} #{{ category.id }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="latest-empty-photo">• Нет данных</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Четвертый ряд карточек - Последние баннеры и Последние FAQ -->
+        <div class="latest-cards-row">
+            <div class="latest-card-photo">
+                <div class="latest-card-header-photo">
+                    <span class="latest-card-title-photo">Последние баннеры</span>
+                </div>
+                <div class="latest-card-body-photo">
+                    {% if recent_banners %}
+                        <ul class="latest-list-photo">
+                            {% for banner in recent_banners %}
+                            <li class="latest-list-item-photo">
+                                <a href="{% url 'admin:store_banner_change' banner.id %}">
+                                    {{ banner.title }} #{{ banner.id }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="latest-empty-photo">• Нет данных</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="latest-card-photo">
+                <div class="latest-card-header-photo">
+                    <span class="latest-card-title-photo">Последние FAQ</span>
+                </div>
+                <div class="latest-card-body-photo">
+                    {% if recent_faqs %}
+                        <ul class="latest-list-photo">
+                            {% for faq in recent_faqs %}
+                            <li class="latest-list-item-photo">
+                                <a href="{% url 'admin:store_faq_change' faq.id %}">
+                                    {{ faq.question|truncatewords:8 }} #{{ faq.id }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="latest-empty-photo">• Нет данных</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Дополнительная информация -->
+        {% if pending_orders or processing_orders or delivered_orders or low_stock_products or out_of_stock_products or total_revenue %}
+        <div class="info-cards-row">
+            {% if pending_orders or processing_orders or delivered_orders or cancelled_orders %}
+            <div class="info-card-photo">
+                <div class="info-card-header-photo">
+                    <span class="info-card-title-photo">Статистика заказов</span>
+                </div>
+                <div class="info-card-body-photo">
+                    <div class="info-stats-list">
+                        {% if pending_orders %}
+                        <div class="info-stat-item pending">
+                            <span class="info-stat-label">Ожидают:</span>
+                            <span class="info-stat-value">{{ pending_orders }}</span>
+                        </div>
+                        {% endif %}
+                        {% if processing_orders %}
+                        <div class="info-stat-item processing">
+                            <span class="info-stat-label">В обработке:</span>
+                            <span class="info-stat-value">{{ processing_orders }}</span>
+                        </div>
+                        {% endif %}
+                        {% if delivered_orders %}
+                        <div class="info-stat-item delivered">
+                            <span class="info-stat-label">Доставлено:</span>
+                            <span class="info-stat-value">{{ delivered_orders }}</span>
+                        </div>
+                        {% endif %}
+                        {% if cancelled_orders %}
+                        <div class="info-stat-item cancelled">
+                            <span class="info-stat-label">Отменено:</span>
+                            <span class="info-stat-value">{{ cancelled_orders }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if low_stock_products or out_of_stock_products %}
+            <div class="info-card-photo">
+                <div class="info-card-header-photo">
+                    <span class="info-card-title-photo">Склад</span>
+                </div>
+                <div class="info-card-body-photo">
+                    <div class="info-stats-list">
+                        {% if low_stock_products %}
+                        <div class="info-stat-item warning">
+                            <span class="info-stat-label">Низкий остаток:</span>
+                            <span class="info-stat-value">{{ low_stock_products }}</span>
+                        </div>
+                        {% endif %}
+                        {% if out_of_stock_products %}
+                        <div class="info-stat-item error">
+                            <span class="info-stat-label">Нет в наличии:</span>
+                            <span class="info-stat-value">{{ out_of_stock_products }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if total_revenue %}
+            <div class="info-card-photo">
+                <div class="info-card-header-photo">
+                    <span class="info-card-title-photo">Общая выручка</span>
+                </div>
+                <div class="info-card-body-photo">
+                    <div class="revenue-display-photo">
+                        <span class="revenue-value-photo">{{ total_revenue|floatformat:0 }}</span>
+                        <span class="revenue-currency-photo">₽</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,155 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{% if category %}{{ category.name }}{% else %}Все товары{% endif %} - ShopExpress{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>{% if category %}{{ category.name }}{% else %}Все товары{% endif %}</h1>
+        {% if search_query %}
+        <p>Результаты поиска: "{{ search_query }}"</p>
+        {% endif %}
+    </div>
+
+    <div class="products-layout">
+        <!-- Sidebar -->
+        <aside class="products-sidebar">
+            <!-- Categories -->
+            <div class="filter-section">
+                <h3>Категории</h3>
+                <ul class="category-sidebar-list">
+                    <li>
+                        <a href="{% url 'product_list_all' %}" {% if not category %}class="active"{% endif %}>
+                            Все товары
+                        </a>
+                    </li>
+                    {% for cat in all_categories %}
+                    {% if cat.slug %}
+                    <li>
+                        <a href="{% url 'product_list' cat.slug %}" {% if category and category.slug == cat.slug %}class="active"{% endif %}>
+                            {{ cat.name }}
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <!-- Stock Filter -->
+            <div class="filter-section">
+                <h3>Наличие</h3>
+                <form method="get" class="filter-form">
+                    {% if search_query %}
+                    <input type="hidden" name="q" value="{{ search_query }}">
+                    {% endif %}
+                    {% if price_min %}
+                    <input type="hidden" name="price_min" value="{{ price_min }}">
+                    {% endif %}
+                    {% if price_max %}
+                    <input type="hidden" name="price_max" value="{{ price_max }}">
+                    {% endif %}
+                    <select name="in_stock" onchange="this.form.submit()">
+                        <option value="">Все</option>
+                        <option value="yes" {% if in_stock == 'yes' %}selected{% endif %}>В наличии</option>
+                        <option value="no" {% if in_stock == 'no' %}selected{% endif %}>Нет в наличии</option>
+                    </select>
+                </form>
+            </div>
+
+            <!-- Price Filter -->
+            <div class="filter-section">
+                <h3>Цена</h3>
+                <form method="get" class="price-filter-form">
+                    {% if search_query %}
+                    <input type="hidden" name="q" value="{{ search_query }}">
+                    {% endif %}
+                    {% if in_stock %}
+                    <input type="hidden" name="in_stock" value="{{ in_stock }}">
+                    {% endif %}
+                    <div class="price-inputs">
+                        <input type="number" name="price_min" placeholder="От" value="{{ price_min }}" min="0" step="0.01">
+                        <input type="number" name="price_max" placeholder="До" value="{{ price_max }}" min="0" step="0.01">
+                        <button type="submit" class="btn-filter">Применить</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Sort -->
+            <div class="filter-section">
+                <h3>Сортировка</h3>
+                <form method="get" class="sort-form">
+                    {% if search_query %}
+                    <input type="hidden" name="q" value="{{ search_query }}">
+                    {% endif %}
+                    {% if in_stock %}
+                    <input type="hidden" name="in_stock" value="{{ in_stock }}">
+                    {% endif %}
+                    {% if price_min %}
+                    <input type="hidden" name="price_min" value="{{ price_min }}">
+                    {% endif %}
+                    {% if price_max %}
+                    <input type="hidden" name="price_max" value="{{ price_max }}">
+                    {% endif %}
+                    <select name="sort" onchange="this.form.submit()">
+                        <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Новинки</option>
+                        <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Цена: по возрастанию</option>
+                        <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Цена: по убыванию</option>
+                        <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>По рейтингу</option>
+                    </select>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Products Grid -->
+        <div class="products-main">
+            {% if products %}
+            <div class="products-grid">
+                {% for product in products %}
+                {% if product.slug %}
+                <div class="product-card">
+                    <a href="{% url 'product_detail' product.slug %}">
+                        <div class="product-image">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" loading="lazy">
+                            {% else %}
+                            <div class="product-placeholder">
+                                <i class="fas fa-image"></i>
+                            </div>
+                            {% endif %}
+                            {% if product.discount_percent %}
+                            <span class="discount-badge">-{{ product.discount_percent }}%</span>
+                            {% endif %}
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">{{ product.name|truncatewords:8 }}</h3>
+                            <div class="product-rating">
+                                <span class="stars">★</span>
+                                <span class="rating-value">{{ product.rating }}</span>
+                                <span class="rating-text">({{ product.reviews_count }})</span>
+                            </div>
+                            <div class="product-price">
+                                <span class="current-price">{{ product.price }}₽</span>
+                                {% if product.old_price %}
+                                <span class="old-price">{{ product.old_price }}₽</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                    <button class="btn-add-cart" data-product-id="{{ product.id }}">
+                        <i class="fas fa-shopping-cart"></i> В корзину
+                    </button>
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-products">
+                <p>Товары не найдены</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

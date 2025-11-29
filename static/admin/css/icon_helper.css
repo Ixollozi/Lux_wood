@@ -1,0 +1,119 @@
+/* Подсказка для иконок Font Awesome */
+.icon-helper-container {
+    margin-top: 15px;
+    padding: 15px;
+    background: var(--admin-content-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 8px;
+    box-shadow: var(--admin-card-shadow);
+}
+
+.icon-helper-container p {
+    margin: 0 0 15px 0;
+    color: var(--admin-text);
+    font-weight: 600;
+}
+
+.icon-helper-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.icon-helper-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    background: var(--admin-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.icon-helper-item:hover {
+    background: var(--admin-link);
+    border-color: var(--admin-link);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.icon-helper-item:hover i,
+.icon-helper-item:hover .icon-helper-name,
+.icon-helper-item:hover .icon-helper-class {
+    color: white !important;
+}
+
+.icon-helper-item i {
+    font-size: 2em;
+    color: var(--admin-link);
+    margin-bottom: 8px;
+    transition: color 0.2s ease;
+}
+
+.icon-helper-name {
+    font-size: 0.85em;
+    color: var(--admin-text);
+    font-weight: 500;
+    margin-bottom: 4px;
+    transition: color 0.2s ease;
+}
+
+.icon-helper-class {
+    font-size: 0.75em;
+    color: var(--admin-text-secondary);
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+    transition: color 0.2s ease;
+}
+
+.icon-helper-note {
+    margin: 10px 0 0 0 !important;
+    font-size: 0.9em;
+    color: var(--admin-text-secondary);
+    font-style: italic;
+    text-align: center;
+}
+
+/* Превью иконки */
+.icon-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    background: var(--admin-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 6px;
+}
+
+.icon-preview-label {
+    font-weight: 600;
+    color: var(--admin-text);
+    font-size: 0.9em;
+}
+
+.icon-preview i {
+    font-size: 2em;
+    color: var(--admin-link);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .icon-helper-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+    }
+    
+    .icon-helper-item {
+        padding: 10px;
+    }
+    
+    .icon-helper-item i {
+        font-size: 1.5em;
+    }
+}
+

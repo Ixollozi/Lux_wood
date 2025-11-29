@@ -1,0 +1,156 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ product.name }} - ShopExpress{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="product-detail">
+        <div class="product-detail-images">
+            <div class="main-image">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" id="main-product-image">
+                {% else %}
+                <div class="product-placeholder-large">
+                    <i class="fas fa-image"></i>
+                    <p>Изображение отсутствует</p>
+                </div>
+                {% endif %}
+            </div>
+            {% if product.images.all %}
+            <div class="thumbnail-images">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="thumbnail active" onclick="changeImage('{{ product.image.url }}')">
+                {% endif %}
+                {% for img in product.images.all %}
+                <img src="{{ img.image.url }}" alt="{{ product.name }}" class="thumbnail" onclick="changeImage('{{ img.image.url }}')">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="product-detail-info">
+            <h1 class="product-title">{{ product.name }}</h1>
+            
+            <div class="product-rating-large">
+                <span class="stars">★</span>
+                <span class="rating-value">{{ product.rating }}</span>
+                <span class="reviews-count">({{ product.reviews_count }} отзывов)</span>
+            </div>
+
+            <div class="product-price-large">
+                <span class="current-price">{{ product.price }}₽</span>
+                {% if product.old_price %}
+                <span class="old-price">{{ product.old_price }}₽</span>
+                <span class="discount-text">Скидка {{ product.discount_percent }}%</span>
+                {% endif %}
+            </div>
+
+            <div class="product-stock">
+                {% if product.stock > 0 %}
+                <span class="in-stock"><i class="fas fa-check-circle"></i> В наличии ({{ product.stock }} шт.)</span>
+                {% else %}
+                <span class="out-of-stock"><i class="fas fa-times-circle"></i> Нет в наличии</span>
+                {% endif %}
+            </div>
+
+            <div class="product-description">
+                <h3>Описание</h3>
+                <p>{{ product.description }}</p>
+            </div>
+
+            {% if attributes %}
+            <div class="product-attributes">
+                <h3>Характеристики</h3>
+                <table class="attributes-table">
+                    {% for attr in attributes %}
+                    <tr>
+                        <td class="attr-name">{{ attr.name }}</td>
+                        <td class="attr-value">{{ attr.value }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            {% endif %}
+
+            <div class="product-actions">
+                <div class="quantity-selector">
+                    <button class="qty-btn" onclick="changeQuantity(-1)">-</button>
+                    <input type="number" id="product-quantity" value="1" min="1" max="{{ product.stock }}">
+                    <button class="qty-btn" onclick="changeQuantity(1)">+</button>
+                </div>
+                <button class="btn btn-primary btn-large add-to-cart-btn" data-product-id="{{ product.id }}">
+                    <i class="fas fa-shopping-cart"></i> Добавить в корзину
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <section class="related-products">
+        <h2 class="section-title">Похожие товары</h2>
+        <div class="products-grid">
+            {% for product in related_products %}
+            {% if product.slug %}
+            <div class="product-card">
+                <a href="{% url 'product_detail' product.slug %}">
+                    <div class="product-image">
+                        {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                        <div class="product-placeholder">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        {% endif %}
+                        {% if product.discount_percent %}
+                        <span class="discount-badge">-{{ product.discount_percent }}%</span>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">{{ product.name|truncatewords:8 }}</h3>
+                        <div class="product-rating">
+                            <span class="stars">★</span>
+                            <span class="rating-value">{{ product.rating }}</span>
+                            <span class="rating-text">({{ product.reviews_count }})</span>
+                        </div>
+                        <div class="product-price">
+                            <span class="current-price">{{ product.price }}₽</span>
+                            {% if product.old_price %}
+                            <span class="old-price">{{ product.old_price }}₽</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                <button class="btn-add-cart" data-product-id="{{ product.id }}">
+                    <i class="fas fa-shopping-cart"></i> В корзину
+                </button>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+
+<script>
+function changeImage(imageUrl) {
+    document.getElementById('main-product-image').src = imageUrl;
+    document.querySelectorAll('.thumbnail').forEach(thumb => {
+        thumb.classList.remove('active');
+        if (thumb.src.includes(imageUrl)) {
+            thumb.classList.add('active');
+        }
+    });
+}
+
+function changeQuantity(delta) {
+    const input = document.getElementById('product-quantity');
+    const currentValue = parseInt(input.value);
+    const max = parseInt(input.max);
+    const newValue = Math.max(1, Math.min(max, currentValue + delta));
+    input.value = newValue;
+}
+</script>
+{% endblock %}
+

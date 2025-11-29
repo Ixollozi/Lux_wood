@@ -1,0 +1,97 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}FAQ - ShopExpress{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <h1>Часто задаваемые вопросы</h1>
+    </div>
+
+    <div class="faq-layout">
+        {% if categories %}
+        <aside class="faq-sidebar">
+            <h3>Категории</h3>
+            <ul class="faq-categories">
+                <li>
+                    <a href="{% url 'faq' %}" {% if not selected_category %}class="active"{% endif %}>
+                        Все вопросы
+                    </a>
+                </li>
+                {% for cat in categories %}
+                <li>
+                    <a href="{% url 'faq' %}?category={{ cat.id }}" {% if selected_category == cat.id %}class="active"{% endif %}>
+                        {{ cat.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </aside>
+        {% endif %}
+
+        <div class="faq-main">
+            {% if faqs %}
+            <div class="faq-list">
+                {% for faq in faqs %}
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>{{ faq.question }}</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>{{ faq.answer|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-faqs">
+                <p>Вопросы не найдены</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        const answer = item.querySelector('.faq-answer');
+        const icon = question.querySelector('i');
+        
+        question.addEventListener('click', function() {
+            const isActive = item.classList.contains('active');
+            
+            // Закрываем все остальные
+            faqItems.forEach(otherItem => {
+                if (otherItem !== item) {
+                    otherItem.classList.remove('active');
+                    const otherAnswer = otherItem.querySelector('.faq-answer');
+                    const otherIcon = otherItem.querySelector('.faq-question i');
+                    otherAnswer.style.maxHeight = null;
+                    otherIcon.style.transform = 'rotate(0deg)';
+                }
+            });
+            
+            // Переключаем текущий
+            if (isActive) {
+                item.classList.remove('active');
+                answer.style.maxHeight = null;
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                item.classList.add('active');
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+
+
+
+
