@@ -61,11 +61,38 @@ def unmark_as_featured(modeladmin, request, queryset):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug', 'parent', 'image_preview', 'products_count']
+    list_display = ['name_display', 'slug', 'parent', 'image_preview', 'products_count']
     list_filter = ['parent']
-    search_fields = ['name']
-    prepopulated_fields = {'slug': ('name',)}
-    ordering = ['name']
+    search_fields = ['name_ru', 'name_en', 'name_uz']
+    prepopulated_fields = {'slug': ('name_ru',)}
+    ordering = ['name_ru']
+    fieldsets = (
+        ('Русский язык (RU)', {
+            'fields': ('name_ru',)
+        }),
+        ('English (EN)', {
+            'fields': ('name_en',),
+            'classes': ('collapse',)
+        }),
+        ('O\'zbek (UZ)', {
+            'fields': ('name_uz',),
+            'classes': ('collapse',)
+        }),
+        ('Дополнительно', {
+            'fields': ('slug', 'parent', 'image')
+        }),
+    )
+    
+    def name_display(self, obj):
+        return format_html(
+            '<strong>{}</strong><br>'
+            '<span style="color: #666; font-size: 0.9em;">EN: {}</span><br>'
+            '<span style="color: #666; font-size: 0.9em;">UZ: {}</span>',
+            obj.name_ru,
+            obj.name_en or '-',
+            obj.name_uz or '-'
+        )
+    name_display.short_description = 'Название'
     
     def image_preview(self, obj):
         if obj.image:
@@ -98,23 +125,36 @@ class ProductImageInline(admin.TabularInline):
 class ProductAttributeInline(admin.TabularInline):
     model = ProductAttribute
     extra = 1
-    fields = ('name', 'value', 'order')
+    fields = ('name_ru', 'value_ru', 'order')
+    verbose_name = 'Характеристика'
+    verbose_name_plural = 'Характеристики'
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['image_preview', 'name', 'category', 'price_display', 'stock', 'rating_display', 'featured_badge', 'created_at']
+    list_display = ['image_preview', 'name_display', 'category', 'price_display', 'stock', 'rating_display', 'featured_badge', 'created_at']
     list_filter = ['category', 'featured', 'created_at', 'stock']
-    search_fields = ['name', 'description']
-    prepopulated_fields = {'slug': ('name',)}
+    search_fields = ['name_ru', 'name_en', 'name_uz', 'description_ru', 'description_en', 'description_uz']
+    prepopulated_fields = {'slug': ('name_ru',)}
     inlines = [ProductImageInline, ProductAttributeInline]
     ordering = ['-created_at']
     actions = [mark_as_featured, unmark_as_featured]
     list_per_page = 25
     date_hierarchy = 'created_at'
     fieldsets = (
+        ('Русский язык (RU)', {
+            'fields': ('name_ru', 'description_ru')
+        }),
+        ('English (EN)', {
+            'fields': ('name_en', 'description_en'),
+            'classes': ('collapse',)
+        }),
+        ('O\'zbek (UZ)', {
+            'fields': ('name_uz', 'description_uz'),
+            'classes': ('collapse',)
+        }),
         ('Основная информация', {
-            'fields': ('name', 'slug', 'category', 'description')
+            'fields': ('slug', 'category', 'image', 'image_preview')
         }),
         ('Цены и наличие', {
             'fields': ('price', 'old_price', 'stock')
@@ -122,14 +162,22 @@ class ProductAdmin(admin.ModelAdmin):
         ('Рейтинг и отзывы', {
             'fields': ('rating', 'reviews_count')
         }),
-        ('Изображение', {
-            'fields': ('image', 'image_preview')
-        }),
         ('Дополнительно', {
             'fields': ('featured',)
         }),
     )
     readonly_fields = ('image_preview',)
+    
+    def name_display(self, obj):
+        return format_html(
+            '<strong>{}</strong><br>'
+            '<span style="color: #666; font-size: 0.85em;">EN: {}</span><br>'
+            '<span style="color: #666; font-size: 0.85em;">UZ: {}</span>',
+            obj.name_ru,
+            obj.name_en or '-',
+            obj.name_uz or '-'
+        )
+    name_display.short_description = 'Название'
     
     def image_preview(self, obj):
         if obj.image:
@@ -141,12 +189,12 @@ class ProductAdmin(admin.ModelAdmin):
         if obj.old_price:
             discount = obj.discount_percent
             return format_html(
-                '<span style="color: #d32f2f; font-weight: bold;">{} ₽</span><br>'
-                '<span style="color: #999; text-decoration: line-through; font-size: 0.9em;">{} ₽</span><br>'
+                '<span style="color: #d32f2f; font-weight: bold;">{}  сум</span><br>'
+                '<span style="color: #999; text-decoration: line-through; font-size: 0.9em;">{}  сум</span><br>'
                 '<span style="color: #4caf50; font-size: 0.85em;">-{}%</span>',
                 obj.price, obj.old_price, discount
             )
-        return format_html('<span style="font-weight: bold;">{} ₽</span>', obj.price)
+        return format_html('<span style="font-weight: bold;">{}  сум</span>', obj.price)
     price_display.short_description = 'Цена'
     
     def rating_display(self, obj):
@@ -180,7 +228,7 @@ class CartAdmin(admin.ModelAdmin):
     session_key_short.short_description = 'Сессия'
     
     def total_price_display(self, obj):
-        return format_html('<span style="font-weight: bold; color: #1976d2;">{} ₽</span>', obj.total_price)
+        return format_html('<span style="font-weight: bold; color: #1976d2;">{}  сум</span>', obj.total_price)
     total_price_display.short_description = 'Сумма'
     
     def items_list(self, obj):
@@ -188,7 +236,7 @@ class CartAdmin(admin.ModelAdmin):
         if items:
             html = '<ul style="margin: 0; padding-left: 20px;">'
             for item in items:
-                html += f'<li>{item.product.name} x{item.quantity} = {item.total_price} ₽</li>'
+                html += f'<li>{item.product.get_name()} x{item.quantity} = {item.total_price} сум</li>'
             html += '</ul>'
             return format_html(html)
         return 'Корзина пуста'
@@ -202,7 +250,7 @@ class CartItemAdmin(admin.ModelAdmin):
     search_fields = ['product__name']
     
     def total_price_display(self, obj):
-        return format_html('<span style="font-weight: bold;">{} ₽</span>', obj.total_price)
+        return format_html('<span style="font-weight: bold;">{}  сум</span>', obj.total_price)
     total_price_display.short_description = 'Сумма'
 
 
@@ -288,7 +336,7 @@ class OrderAdmin(admin.ModelAdmin):
     status_badge.short_description = 'Статус'
     
     def total_price_display(self, obj):
-        return format_html('<span style="font-weight: bold; color: #1976d2; font-size: 1.1em;">{} ₽</span>', obj.total_price)
+        return format_html('<span style="font-weight: bold; color: #1976d2; font-size: 1.1em;">{}  сум</span>', obj.total_price)
     total_price_display.short_description = 'Сумма'
     
     def items_count(self, obj):
@@ -301,7 +349,7 @@ class OrderAdmin(admin.ModelAdmin):
         if items:
             html = '<div style="margin-top: 10px;"><strong>Товары в заказе:</strong><ul style="margin: 10px 0; padding-left: 20px;">'
             for item in items:
-                html += f'<li>{item.product.name} x{item.quantity} = {item.total_price} ₽</li>'
+                html += f'<li>{item.product.get_name()} x{item.quantity} = {item.total_price} сум</li>'
             html += '</ul></div>'
             return format_html(html)
         return 'Нет товаров'
@@ -320,17 +368,44 @@ class OrderItemAdmin(admin.ModelAdmin):
     order_link.short_description = 'Заказ'
     
     def total_price_display(self, obj):
-        return format_html('<span style="font-weight: bold;">{} ₽</span>', obj.total_price)
+        return format_html('<span style="font-weight: bold;">{}  сум</span>', obj.total_price)
     total_price_display.short_description = 'Сумма'
 
 
 @admin.register(Banner)
 class BannerAdmin(admin.ModelAdmin):
-    list_display = ['image_preview', 'title', 'order', 'is_active_badge', 'created_at']
+    list_display = ['image_preview', 'title_display', 'order', 'is_active_badge', 'created_at']
     list_filter = ['is_active', 'created_at']
-    search_fields = ['title', 'description']
+    search_fields = ['title_ru', 'title_en', 'title_uz', 'description_ru', 'description_en', 'description_uz']
     ordering = ['order', '-created_at']
     actions = [activate_selected, deactivate_selected]
+    fieldsets = (
+        ('Русский язык (RU)', {
+            'fields': ('title_ru', 'description_ru')
+        }),
+        ('English (EN)', {
+            'fields': ('title_en', 'description_en'),
+            'classes': ('collapse',)
+        }),
+        ('O\'zbek (UZ)', {
+            'fields': ('title_uz', 'description_uz'),
+            'classes': ('collapse',)
+        }),
+        ('Дополнительно', {
+            'fields': ('image', 'link', 'order', 'is_active')
+        }),
+    )
+    
+    def title_display(self, obj):
+        return format_html(
+            '<strong>{}</strong><br>'
+            '<span style="color: #666; font-size: 0.85em;">EN: {}</span><br>'
+            '<span style="color: #666; font-size: 0.85em;">UZ: {}</span>',
+            obj.title_ru,
+            obj.title_en or '-',
+            obj.title_uz or '-'
+        )
+    title_display.short_description = 'Заголовок'
     
     def image_preview(self, obj):
         if obj.image:
@@ -347,11 +422,38 @@ class BannerAdmin(admin.ModelAdmin):
 
 @admin.register(Sponsor)
 class SponsorAdmin(admin.ModelAdmin):
-    list_display = ['logo_preview', 'name', 'order', 'is_active_badge', 'website_link']
+    list_display = ['logo_preview', 'name_display', 'order', 'is_active_badge', 'website_link']
     list_filter = ['is_active']
-    search_fields = ['name']
-    ordering = ['order', 'name']
+    search_fields = ['name_ru', 'name_en', 'name_uz']
+    ordering = ['order', 'name_ru']
     actions = [activate_selected, deactivate_selected]
+    fieldsets = (
+        ('Русский язык (RU)', {
+            'fields': ('name_ru',)
+        }),
+        ('English (EN)', {
+            'fields': ('name_en',),
+            'classes': ('collapse',)
+        }),
+        ('O\'zbek (UZ)', {
+            'fields': ('name_uz',),
+            'classes': ('collapse',)
+        }),
+        ('Дополнительно', {
+            'fields': ('logo', 'website', 'order', 'is_active')
+        }),
+    )
+    
+    def name_display(self, obj):
+        return format_html(
+            '<strong>{}</strong><br>'
+            '<span style="color: #666; font-size: 0.85em;">EN: {}</span><br>'
+            '<span style="color: #666; font-size: 0.85em;">UZ: {}</span>',
+            obj.name_ru,
+            obj.name_en or '-',
+            obj.name_uz or '-'
+        )
+    name_display.short_description = 'Название'
     
     def logo_preview(self, obj):
         if obj.logo:
@@ -374,22 +476,67 @@ class SponsorAdmin(admin.ModelAdmin):
 
 @admin.register(FAQCategory)
 class FAQCategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'order']
-    ordering = ['order', 'name']
+    list_display = ['name_display', 'order']
+    search_fields = ['name_ru', 'name_en', 'name_uz']
+    ordering = ['order', 'name_ru']
+    fieldsets = (
+        ('Русский язык (RU)', {
+            'fields': ('name_ru',)
+        }),
+        ('English (EN)', {
+            'fields': ('name_en',),
+            'classes': ('collapse',)
+        }),
+        ('O\'zbek (UZ)', {
+            'fields': ('name_uz',),
+            'classes': ('collapse',)
+        }),
+        ('Дополнительно', {
+            'fields': ('order',)
+        }),
+    )
+    
+    def name_display(self, obj):
+        return format_html(
+            '<strong>{}</strong><br>'
+            '<span style="color: #666; font-size: 0.85em;">EN: {}</span><br>'
+            '<span style="color: #666; font-size: 0.85em;">UZ: {}</span>',
+            obj.name_ru,
+            obj.name_en or '-',
+            obj.name_uz or '-'
+        )
+    name_display.short_description = 'Название'
 
 
 @admin.register(FAQ)
 class FAQAdmin(admin.ModelAdmin):
     list_display = ['question_short', 'category', 'order', 'is_active_badge']
     list_filter = ['category', 'is_active']
-    search_fields = ['question', 'answer']
-    ordering = ['order', 'question']
+    search_fields = ['question_ru', 'question_en', 'question_uz', 'answer_ru', 'answer_en', 'answer_uz']
+    ordering = ['order', 'question_ru']
     actions = [activate_selected, deactivate_selected]
+    fieldsets = (
+        ('Русский язык (RU)', {
+            'fields': ('question_ru', 'answer_ru')
+        }),
+        ('English (EN)', {
+            'fields': ('question_en', 'answer_en'),
+            'classes': ('collapse',)
+        }),
+        ('O\'zbek (UZ)', {
+            'fields': ('question_uz', 'answer_uz'),
+            'classes': ('collapse',)
+        }),
+        ('Дополнительно', {
+            'fields': ('category', 'order', 'is_active')
+        }),
+    )
     
     def question_short(self, obj):
-        if len(obj.question) > 60:
-            return obj.question[:60] + '...'
-        return obj.question
+        question = obj.question_ru
+        if len(question) > 60:
+            return question[:60] + '...'
+        return question
     question_short.short_description = 'Вопрос'
     
     def is_active_badge(self, obj):
@@ -402,14 +549,19 @@ class FAQAdmin(admin.ModelAdmin):
 @admin.register(CompanyInfo)
 class CompanyInfoAdmin(admin.ModelAdmin):
     fieldsets = (
-        ('Основная информация', {
-            'fields': ('name', 'logo', 'about_text')
+        ('Русский язык (RU)', {
+            'fields': ('name_ru', 'about_text_ru', 'mission_ru', 'values_ru', 'history_ru', 'address_ru', 'city_ru', 'working_hours_ru')
         }),
-        ('О компании', {
-            'fields': ('mission', 'values', 'history')
+        ('English (EN)', {
+            'fields': ('name_en', 'about_text_en', 'mission_en', 'values_en', 'history_en', 'address_en', 'city_en', 'working_hours_en'),
+            'classes': ('collapse',)
         }),
-        ('Контакты', {
-            'fields': ('email', 'phone', 'address', 'city', 'postal_code', 'working_hours')
+        ('O\'zbek (UZ)', {
+            'fields': ('name_uz', 'about_text_uz', 'mission_uz', 'values_uz', 'history_uz', 'address_uz', 'city_uz', 'working_hours_uz'),
+            'classes': ('collapse',)
+        }),
+        ('Контакты (общие)', {
+            'fields': ('logo', 'email', 'phone', 'postal_code')
         }),
         ('Карта', {
             'fields': ('map_url', 'latitude', 'longitude')
@@ -429,21 +581,39 @@ class CompanyInfoAdmin(admin.ModelAdmin):
 
 @admin.register(Advantage)
 class AdvantageAdmin(admin.ModelAdmin):
-    list_display = ['title', 'icon_display', 'order', 'is_active_badge']
+    list_display = ['title_display', 'icon_display', 'order', 'is_active_badge']
     list_filter = ['is_active']
-    search_fields = ['title', 'description']
-    ordering = ['order', 'title']
+    search_fields = ['title_ru', 'title_en', 'title_uz', 'description_ru', 'description_en', 'description_uz']
+    ordering = ['order', 'title_ru']
     actions = [activate_selected, deactivate_selected]
     
     fieldsets = (
-        ('Основная информация', {
-            'fields': ('title', 'description', 'order', 'is_active')
+        ('Русский язык (RU)', {
+            'fields': ('title_ru', 'description_ru')
         }),
-        ('Иконка', {
-            'fields': ('icon',),
-            'description': 'Введите класс Font Awesome (например: fas fa-star). Ниже показаны популярные иконки:'
+        ('English (EN)', {
+            'fields': ('title_en', 'description_en'),
+            'classes': ('collapse',)
+        }),
+        ('O\'zbek (UZ)', {
+            'fields': ('title_uz', 'description_uz'),
+            'classes': ('collapse',)
+        }),
+        ('Дополнительно', {
+            'fields': ('icon', 'order', 'is_active')
         }),
     )
+    
+    def title_display(self, obj):
+        return format_html(
+            '<strong>{}</strong><br>'
+            '<span style="color: #666; font-size: 0.85em;">EN: {}</span><br>'
+            '<span style="color: #666; font-size: 0.85em;">UZ: {}</span>',
+            obj.title_ru,
+            obj.title_en or '-',
+            obj.title_uz or '-'
+        )
+    title_display.short_description = 'Заголовок'
     
     class Media:
         css = {

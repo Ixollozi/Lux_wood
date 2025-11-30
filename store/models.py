@@ -16,8 +16,35 @@ class SlugMixin:
         return slug
 
 
-class Category(SlugMixin, models.Model):
-    name = models.CharField(max_length=200, verbose_name='Название', db_index=True)
+class MultilingualMixin:
+    """Миксин для получения многоязычных значений"""
+    def get_field_value(self, field_base_name, language=None):
+        """Получить значение поля на указанном языке или текущем языке"""
+        if language is None:
+            from django.utils.translation import get_language
+            language = get_language() or 'ru'
+        
+        field_name = f"{field_base_name}_{language}"
+        fallback_field = f"{field_base_name}_ru"
+        
+        if hasattr(self, field_name):
+            value = getattr(self, field_name)
+            if value:
+                return value
+        
+        # Возвращаем русское значение как fallback
+        if hasattr(self, fallback_field):
+            return getattr(self, fallback_field, '')
+        return ''
+
+
+class Category(SlugMixin, MultilingualMixin, models.Model):
+    """Категории товаров с поддержкой многоязычности"""
+    # Многоязычные поля
+    name_ru = models.CharField(max_length=200, verbose_name='Название (RU)', db_index=True)
+    name_en = models.CharField(max_length=200, verbose_name='Название (EN)', blank=True, db_index=True)
+    name_uz = models.CharField(max_length=200, verbose_name='Название (UZ)', blank=True, db_index=True)
+    
     slug = models.SlugField(unique=True, blank=True, db_index=True)
     image = models.ImageField(upload_to='categories/', blank=True, null=True, verbose_name='Изображение')
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children', verbose_name='Родительская категория', db_index=True)
@@ -25,26 +52,42 @@ class Category(SlugMixin, models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        ordering = ['name']
+        ordering = ['name_ru']
         indexes = [
             models.Index(fields=['slug']),
             models.Index(fields=['parent']),
         ]
     
     def __str__(self):
-        return self.name
+        return self.name_ru
+    
+    def get_name(self, language=None):
+        """Получить название на указанном языке"""
+        return self.get_field_value('name', language)
+    
+    @property
+    def name(self):
+        """Свойство для обратной совместимости"""
+        return self.get_name()
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.name)
+            base_slug = slugify(self.name_ru)
             self.slug = self.generate_unique_slug(base_slug, Category)
         super().save(*args, **kwargs)
 
 
-class Product(SlugMixin, models.Model):
-    name = models.CharField(max_length=300, verbose_name='Название', db_index=True)
+class Product(SlugMixin, MultilingualMixin, models.Model):
+    """Товары с поддержкой многоязычности"""
+    # Многоязычные поля
+    name_ru = models.CharField(max_length=300, verbose_name='Название (RU)', db_index=True)
+    name_en = models.CharField(max_length=300, verbose_name='Название (EN)', blank=True, db_index=True)
+    name_uz = models.CharField(max_length=300, verbose_name='Название (UZ)', blank=True, db_index=True)
+    description_ru = models.TextField(verbose_name='Описание (RU)')
+    description_en = models.TextField(verbose_name='Описание (EN)', blank=True)
+    description_uz = models.TextField(verbose_name='Описание (UZ)', blank=True)
+    
     slug = models.SlugField(unique=True, blank=True, db_index=True)
-    description = models.TextField(verbose_name='Описание')
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена', db_index=True)
     old_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name='Старая цена')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', verbose_name='Категория', db_index=True)
@@ -69,11 +112,29 @@ class Product(SlugMixin, models.Model):
         ]
     
     def __str__(self):
-        return self.name
+        return self.name_ru
+    
+    def get_name(self, language=None):
+        """Получить название на указанном языке"""
+        return self.get_field_value('name', language)
+    
+    def get_description(self, language=None):
+        """Получить описание на указанном языке"""
+        return self.get_field_value('description', language)
+    
+    @property
+    def name(self):
+        """Свойство для обратной совместимости"""
+        return self.get_name()
+    
+    @property
+    def description(self):
+        """Свойство для обратной совместимости"""
+        return self.get_description()
     
     def save(self, *args, **kwargs):
         if not self.slug:
-            base_slug = slugify(self.name)
+            base_slug = slugify(self.name_ru)
             self.slug = self.generate_unique_slug(base_slug, Product)
         super().save(*args, **kwargs)
     
@@ -161,7 +222,7 @@ class CartItem(models.Model):
         ]
     
     def __str__(self):
-        return f'{self.product.name} x{self.quantity}'
+        return f'{self.product.get_name()} x{self.quantity}'
     
     @property
     def total_price(self):
@@ -230,7 +291,7 @@ class OrderItem(models.Model):
         ]
     
     def __str__(self):
-        return f'{self.product.name} x{self.quantity}'
+        return f'{self.product.get_name()} x{self.quantity}'
     
     @property
     def total_price(self):
@@ -238,29 +299,58 @@ class OrderItem(models.Model):
         return self.price * self.quantity
 
 
-class ProductAttribute(models.Model):
-    """Характеристики товара"""
+class ProductAttribute(MultilingualMixin, models.Model):
+    """Характеристики товара с поддержкой многоязычности"""
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='attributes', verbose_name='Товар', db_index=True)
-    name = models.CharField(max_length=200, verbose_name='Название характеристики')
-    value = models.CharField(max_length=500, verbose_name='Значение')
+    # Многоязычные поля
+    name_ru = models.CharField(max_length=200, verbose_name='Название характеристики (RU)')
+    name_en = models.CharField(max_length=200, verbose_name='Название характеристики (EN)', blank=True)
+    name_uz = models.CharField(max_length=200, verbose_name='Название характеристики (UZ)', blank=True)
+    value_ru = models.CharField(max_length=500, verbose_name='Значение (RU)')
+    value_en = models.CharField(max_length=500, verbose_name='Значение (EN)', blank=True)
+    value_uz = models.CharField(max_length=500, verbose_name='Значение (UZ)', blank=True)
     order = models.IntegerField(default=0, verbose_name='Порядок отображения', db_index=True)
     
     class Meta:
         verbose_name = 'Характеристика товара'
         verbose_name_plural = 'Характеристики товаров'
-        ordering = ['order', 'name']
+        ordering = ['order', 'name_ru']
         indexes = [
             models.Index(fields=['product', 'order']),
         ]
     
     def __str__(self):
-        return f'{self.product.name} - {self.name}: {self.value}'
+        return f'{self.product.name_ru} - {self.name_ru}: {self.value_ru}'
+    
+    def get_name(self, language=None):
+        """Получить название характеристики на указанном языке"""
+        return self.get_field_value('name', language)
+    
+    def get_value(self, language=None):
+        """Получить значение характеристики на указанном языке"""
+        return self.get_field_value('value', language)
+    
+    @property
+    def name(self):
+        """Свойство для обратной совместимости"""
+        return self.get_name()
+    
+    @property
+    def value(self):
+        """Свойство для обратной совместимости"""
+        return self.get_value()
 
 
-class Banner(models.Model):
-    """Баннеры для главной страницы"""
-    title = models.CharField(max_length=200, verbose_name='Заголовок')
-    description = models.TextField(blank=True, verbose_name='Описание')
+class Banner(MultilingualMixin, models.Model):
+    """Баннеры для главной страницы с поддержкой многоязычности"""
+    # Многоязычные поля
+    title_ru = models.CharField(max_length=200, verbose_name='Заголовок (RU)')
+    title_en = models.CharField(max_length=200, verbose_name='Заголовок (EN)', blank=True)
+    title_uz = models.CharField(max_length=200, verbose_name='Заголовок (UZ)', blank=True)
+    description_ru = models.TextField(blank=True, verbose_name='Описание (RU)')
+    description_en = models.TextField(blank=True, verbose_name='Описание (EN)')
+    description_uz = models.TextField(blank=True, verbose_name='Описание (UZ)')
+    
     image = models.ImageField(upload_to='banners/', verbose_name='Изображение')
     link = models.URLField(blank=True, null=True, verbose_name='Ссылка')
     order = models.IntegerField(default=0, verbose_name='Порядок отображения', db_index=True)
@@ -276,12 +366,34 @@ class Banner(models.Model):
         ]
     
     def __str__(self):
-        return self.title
+        return self.title_ru
+    
+    def get_title(self, language=None):
+        """Получить заголовок на указанном языке"""
+        return self.get_field_value('title', language)
+    
+    def get_description(self, language=None):
+        """Получить описание на указанном языке"""
+        return self.get_field_value('description', language)
+    
+    @property
+    def title(self):
+        """Свойство для обратной совместимости"""
+        return self.get_title()
+    
+    @property
+    def description(self):
+        """Свойство для обратной совместимости"""
+        return self.get_description()
 
 
-class Sponsor(models.Model):
-    """Спонсоры/партнеры"""
-    name = models.CharField(max_length=200, verbose_name='Название')
+class Sponsor(MultilingualMixin, models.Model):
+    """Спонсоры/партнеры с поддержкой многоязычности"""
+    # Многоязычные поля
+    name_ru = models.CharField(max_length=200, verbose_name='Название (RU)')
+    name_en = models.CharField(max_length=200, verbose_name='Название (EN)', blank=True)
+    name_uz = models.CharField(max_length=200, verbose_name='Название (UZ)', blank=True)
+    
     logo = models.ImageField(upload_to='sponsors/', verbose_name='Логотип')
     website = models.URLField(blank=True, null=True, verbose_name='Сайт')
     order = models.IntegerField(default=0, verbose_name='Порядок отображения', db_index=True)
@@ -290,66 +402,131 @@ class Sponsor(models.Model):
     class Meta:
         verbose_name = 'Спонсор'
         verbose_name_plural = 'Спонсоры'
-        ordering = ['order', 'name']
+        ordering = ['order', 'name_ru']
         indexes = [
             models.Index(fields=['is_active', 'order']),
         ]
     
     def __str__(self):
-        return self.name
+        return self.name_ru
+    
+    def get_name(self, language=None):
+        """Получить название на указанном языке"""
+        return self.get_field_value('name', language)
+    
+    @property
+    def name(self):
+        """Свойство для обратной совместимости"""
+        return self.get_name()
 
 
-class FAQCategory(models.Model):
-    """Категории FAQ"""
-    name = models.CharField(max_length=200, verbose_name='Название')
+class FAQCategory(MultilingualMixin, models.Model):
+    """Категории FAQ с поддержкой многоязычности"""
+    # Многоязычные поля
+    name_ru = models.CharField(max_length=200, verbose_name='Название (RU)')
+    name_en = models.CharField(max_length=200, verbose_name='Название (EN)', blank=True)
+    name_uz = models.CharField(max_length=200, verbose_name='Название (UZ)', blank=True)
+    
     order = models.IntegerField(default=0, verbose_name='Порядок отображения', db_index=True)
     
     class Meta:
         verbose_name = 'Категория FAQ'
         verbose_name_plural = 'Категории FAQ'
-        ordering = ['order', 'name']
+        ordering = ['order', 'name_ru']
         indexes = [
             models.Index(fields=['order']),
         ]
     
     def __str__(self):
-        return self.name
+        return self.name_ru
+    
+    def get_name(self, language=None):
+        """Получить название на указанном языке"""
+        return self.get_field_value('name', language)
+    
+    @property
+    def name(self):
+        """Свойство для обратной совместимости"""
+        return self.get_name()
 
 
-class FAQ(models.Model):
-    """Часто задаваемые вопросы"""
+class FAQ(MultilingualMixin, models.Model):
+    """Часто задаваемые вопросы с поддержкой многоязычности"""
     category = models.ForeignKey(FAQCategory, on_delete=models.CASCADE, related_name='faqs', verbose_name='Категория', null=True, blank=True, db_index=True)
-    question = models.CharField(max_length=500, verbose_name='Вопрос')
-    answer = models.TextField(verbose_name='Ответ')
+    # Многоязычные поля
+    question_ru = models.CharField(max_length=500, verbose_name='Вопрос (RU)')
+    question_en = models.CharField(max_length=500, verbose_name='Вопрос (EN)', blank=True)
+    question_uz = models.CharField(max_length=500, verbose_name='Вопрос (UZ)', blank=True)
+    answer_ru = models.TextField(verbose_name='Ответ (RU)')
+    answer_en = models.TextField(verbose_name='Ответ (EN)', blank=True)
+    answer_uz = models.TextField(verbose_name='Ответ (UZ)', blank=True)
+    
     order = models.IntegerField(default=0, verbose_name='Порядок отображения', db_index=True)
     is_active = models.BooleanField(default=True, verbose_name='Активен', db_index=True)
     
     class Meta:
         verbose_name = 'FAQ'
         verbose_name_plural = 'FAQ'
-        ordering = ['order', 'question']
+        ordering = ['order', 'question_ru']
         indexes = [
             models.Index(fields=['category', 'is_active', 'order']),
         ]
     
     def __str__(self):
-        return self.question
+        return self.question_ru
+    
+    def get_question(self, language=None):
+        """Получить вопрос на указанном языке"""
+        return self.get_field_value('question', language)
+    
+    def get_answer(self, language=None):
+        """Получить ответ на указанном языке"""
+        return self.get_field_value('answer', language)
+    
+    @property
+    def question(self):
+        """Свойство для обратной совместимости"""
+        return self.get_question()
+    
+    @property
+    def answer(self):
+        """Свойство для обратной совместимости"""
+        return self.get_answer()
 
 
-class CompanyInfo(models.Model):
-    """Информация о компании (singleton)"""
-    name = models.CharField(max_length=200, verbose_name='Название компании', default='LuxWood')
+class CompanyInfo(MultilingualMixin, models.Model):
+    """Информация о компании (singleton) с поддержкой многоязычности"""
+    # Многоязычные поля
+    name_ru = models.CharField(max_length=200, verbose_name='Название компании (RU)', default='LuxWood')
+    name_en = models.CharField(max_length=200, verbose_name='Название компании (EN)', default='LuxWood', blank=True)
+    name_uz = models.CharField(max_length=200, verbose_name='Название компании (UZ)', default='LuxWood', blank=True)
+    about_text_ru = models.TextField(blank=True, default='', verbose_name='Текст о компании (RU)')
+    about_text_en = models.TextField(blank=True, default='', verbose_name='Текст о компании (EN)')
+    about_text_uz = models.TextField(blank=True, default='', verbose_name='Текст о компании (UZ)')
+    mission_ru = models.TextField(blank=True, verbose_name='Миссия (RU)')
+    mission_en = models.TextField(blank=True, verbose_name='Миссия (EN)')
+    mission_uz = models.TextField(blank=True, verbose_name='Миссия (UZ)')
+    values_ru = models.TextField(blank=True, verbose_name='Ценности (RU)')
+    values_en = models.TextField(blank=True, verbose_name='Ценности (EN)')
+    values_uz = models.TextField(blank=True, verbose_name='Ценности (UZ)')
+    history_ru = models.TextField(blank=True, verbose_name='История (RU)')
+    history_en = models.TextField(blank=True, verbose_name='История (EN)')
+    history_uz = models.TextField(blank=True, verbose_name='История (UZ)')
+    address_ru = models.TextField(blank=True, default='', verbose_name='Адрес (RU)')
+    address_en = models.TextField(blank=True, default='', verbose_name='Адрес (EN)')
+    address_uz = models.TextField(blank=True, default='', verbose_name='Адрес (UZ)')
+    city_ru = models.CharField(max_length=100, verbose_name='Город (RU)', default='Москва')
+    city_en = models.CharField(max_length=100, verbose_name='Город (EN)', default='Moscow', blank=True)
+    city_uz = models.CharField(max_length=100, verbose_name='Город (UZ)', default='Moskva', blank=True)
+    working_hours_ru = models.CharField(max_length=200, verbose_name='График работы (RU)', default='Пн-Пт: 9:00 - 18:00')
+    working_hours_en = models.CharField(max_length=200, verbose_name='График работы (EN)', default='Mon-Fri: 9:00 - 18:00', blank=True)
+    working_hours_uz = models.CharField(max_length=200, verbose_name='График работы (UZ)', default='Dush-Juma: 9:00 - 18:00', blank=True)
+    
+    # Общие поля (не требуют перевода)
     logo = models.ImageField(upload_to='company/', blank=True, null=True, verbose_name='Логотип')
-    about_text = models.TextField(blank=True, default='', verbose_name='Текст о компании')
-    mission = models.TextField(blank=True, verbose_name='Миссия')
-    values = models.TextField(blank=True, verbose_name='Ценности')
-    history = models.TextField(blank=True, verbose_name='История')
     email = models.EmailField(verbose_name='Email', default='info@luxwood.com')
     phone = models.CharField(max_length=20, verbose_name='Телефон', default='+7 (999) 123-45-67')
-    address = models.TextField(blank=True, default='', verbose_name='Адрес')
-    city = models.CharField(max_length=100, verbose_name='Город', default='Москва')
     postal_code = models.CharField(max_length=20, blank=True, verbose_name='Почтовый индекс')
-    working_hours = models.CharField(max_length=200, verbose_name='График работы', default='Пн-Пт: 9:00 - 18:00')
     map_url = models.URLField(blank=True, null=True, verbose_name='Ссылка на карту')
     latitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, verbose_name='Широта')
     longitude = models.DecimalField(max_digits=9, decimal_places=6, blank=True, null=True, verbose_name='Долгота')
@@ -363,7 +540,72 @@ class CompanyInfo(models.Model):
         verbose_name_plural = 'Информация о компании'
     
     def __str__(self):
-        return self.name
+        return self.name_ru
+    
+    def get_name(self, language=None):
+        """Получить название компании на указанном языке"""
+        return self.get_field_value('name', language)
+    
+    def get_about_text(self, language=None):
+        """Получить текст о компании на указанном языке"""
+        return self.get_field_value('about_text', language)
+    
+    def get_mission(self, language=None):
+        """Получить миссию на указанном языке"""
+        return self.get_field_value('mission', language)
+    
+    def get_values(self, language=None):
+        """Получить ценности на указанном языке"""
+        return self.get_field_value('values', language)
+    
+    def get_history(self, language=None):
+        """Получить историю на указанном языке"""
+        return self.get_field_value('history', language)
+    
+    def get_address(self, language=None):
+        """Получить адрес на указанном языке"""
+        return self.get_field_value('address', language)
+    
+    def get_city(self, language=None):
+        """Получить город на указанном языке"""
+        return self.get_field_value('city', language)
+    
+    def get_working_hours(self, language=None):
+        """Получить график работы на указанном языке"""
+        return self.get_field_value('working_hours', language)
+    
+    # Свойства для обратной совместимости
+    @property
+    def name(self):
+        return self.get_name()
+    
+    @property
+    def about_text(self):
+        return self.get_about_text()
+    
+    @property
+    def mission(self):
+        return self.get_mission()
+    
+    @property
+    def values(self):
+        return self.get_values()
+    
+    @property
+    def history(self):
+        return self.get_history()
+    
+    @property
+    def address(self):
+        return self.get_address()
+    
+    @property
+    def city(self):
+        return self.get_city()
+    
+    @property
+    def working_hours(self):
+        return self.get_working_hours()
     
     def save(self, *args, **kwargs):
         # Обеспечиваем, что существует только одна запись
@@ -377,10 +619,16 @@ class CompanyInfo(models.Model):
         return obj
 
 
-class Advantage(models.Model):
-    """Преимущества компании (Почему выбирают нас)"""
-    title = models.CharField(max_length=200, verbose_name='Заголовок')
-    description = models.TextField(verbose_name='Описание')
+class Advantage(MultilingualMixin, models.Model):
+    """Преимущества компании (Почему выбирают нас) с поддержкой многоязычности"""
+    # Многоязычные поля
+    title_ru = models.CharField(max_length=200, verbose_name='Заголовок (RU)')
+    title_en = models.CharField(max_length=200, verbose_name='Заголовок (EN)', blank=True)
+    title_uz = models.CharField(max_length=200, verbose_name='Заголовок (UZ)', blank=True)
+    description_ru = models.TextField(verbose_name='Описание (RU)')
+    description_en = models.TextField(verbose_name='Описание (EN)', blank=True)
+    description_uz = models.TextField(verbose_name='Описание (UZ)', blank=True)
+    
     icon = models.CharField(
         max_length=100, 
         blank=True, 
@@ -394,13 +642,31 @@ class Advantage(models.Model):
     class Meta:
         verbose_name = 'Преимущество'
         verbose_name_plural = 'Преимущества'
-        ordering = ['order', 'title']
+        ordering = ['order', 'title_ru']
         indexes = [
             models.Index(fields=['is_active', 'order']),
         ]
     
     def __str__(self):
-        return self.title
+        return self.title_ru
+    
+    def get_title(self, language=None):
+        """Получить заголовок на указанном языке"""
+        return self.get_field_value('title', language)
+    
+    def get_description(self, language=None):
+        """Получить описание на указанном языке"""
+        return self.get_field_value('description', language)
+    
+    @property
+    def title(self):
+        """Свойство для обратной совместимости"""
+        return self.get_title()
+    
+    @property
+    def description(self):
+        """Свойство для обратной совместимости"""
+        return self.get_description()
 
 
 class ContactMessage(models.Model):

@@ -1,3 +1,4 @@
+from django.utils.translation import get_language
 from .models import Cart, Category, CompanyInfo
 
 
@@ -16,8 +17,8 @@ def cart(request):
     # Получаем категории для навигации (только с slug, первые 5)
     categories = Category.objects.filter(parent=None).exclude(slug='')[:5]
     
-    # Получаем текущий язык и регион из сессии
-    current_language = request.session.get('language', 'ru')
+    # Получаем текущий язык используя стандартный Django подход
+    current_language = get_language()
     current_region = request.session.get('region', 'RU')
     
     # Получаем информацию о компании

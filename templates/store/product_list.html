@@ -1,14 +1,15 @@
 {% extends 'store/base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}{% if category %}{{ category.name }}{% else %}Все товары{% endif %} - ShopExpress{% endblock %}
+{% block title %}{% if category %}{{ category.name }}{% else %}{% trans "Все товары" %}{% endif %} - ShopExpress{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="page-header">
-        <h1>{% if category %}{{ category.name }}{% else %}Все товары{% endif %}</h1>
+        <h1>{% if category %}{{ category.name }}{% else %}{% trans "Все товары" %}{% endif %}</h1>
         {% if search_query %}
-        <p>Результаты поиска: "{{ search_query }}"</p>
+        <p>{% trans "Результаты поиска" %}: "{{ search_query }}"</p>
         {% endif %}
     </div>
 
@@ -17,11 +18,11 @@
         <aside class="products-sidebar">
             <!-- Categories -->
             <div class="filter-section">
-                <h3>Категории</h3>
+                <h3>{% trans "Категории" %}</h3>
                 <ul class="category-sidebar-list">
                     <li>
                         <a href="{% url 'product_list_all' %}" {% if not category %}class="active"{% endif %}>
-                            Все товары
+                            {% trans "Все товары" %}
                         </a>
                     </li>
                     {% for cat in all_categories %}
@@ -38,7 +39,7 @@
             
             <!-- Stock Filter -->
             <div class="filter-section">
-                <h3>Наличие</h3>
+                <h3>{% trans "Наличие" %}</h3>
                 <form method="get" class="filter-form">
                     {% if search_query %}
                     <input type="hidden" name="q" value="{{ search_query }}">
@@ -50,16 +51,16 @@
                     <input type="hidden" name="price_max" value="{{ price_max }}">
                     {% endif %}
                     <select name="in_stock" onchange="this.form.submit()">
-                        <option value="">Все</option>
-                        <option value="yes" {% if in_stock == 'yes' %}selected{% endif %}>В наличии</option>
-                        <option value="no" {% if in_stock == 'no' %}selected{% endif %}>Нет в наличии</option>
+                        <option value="">{% trans "Все" %}</option>
+                        <option value="yes" {% if in_stock == 'yes' %}selected{% endif %}>{% trans "В наличии" %}</option>
+                        <option value="no" {% if in_stock == 'no' %}selected{% endif %}>{% trans "Нет в наличии" %}</option>
                     </select>
                 </form>
             </div>
 
             <!-- Price Filter -->
             <div class="filter-section">
-                <h3>Цена</h3>
+                <h3>{% trans "Цена" %}</h3>
                 <form method="get" class="price-filter-form">
                     {% if search_query %}
                     <input type="hidden" name="q" value="{{ search_query }}">
@@ -68,16 +69,16 @@
                     <input type="hidden" name="in_stock" value="{{ in_stock }}">
                     {% endif %}
                     <div class="price-inputs">
-                        <input type="number" name="price_min" placeholder="От" value="{{ price_min }}" min="0" step="0.01">
-                        <input type="number" name="price_max" placeholder="До" value="{{ price_max }}" min="0" step="0.01">
-                        <button type="submit" class="btn-filter">Применить</button>
+                        <input type="number" name="price_min" placeholder="{% trans 'От' %}" value="{{ price_min }}" min="0" step="0.01">
+                        <input type="number" name="price_max" placeholder="{% trans 'До' %}" value="{{ price_max }}" min="0" step="0.01">
+                        <button type="submit" class="btn-filter">{% trans "Применить" %}</button>
                     </div>
                 </form>
             </div>
             
             <!-- Sort -->
             <div class="filter-section">
-                <h3>Сортировка</h3>
+                <h3>{% trans "Сортировка" %}</h3>
                 <form method="get" class="sort-form">
                     {% if search_query %}
                     <input type="hidden" name="q" value="{{ search_query }}">
@@ -92,10 +93,10 @@
                     <input type="hidden" name="price_max" value="{{ price_max }}">
                     {% endif %}
                     <select name="sort" onchange="this.form.submit()">
-                        <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>Новинки</option>
-                        <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>Цена: по возрастанию</option>
-                        <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>Цена: по убыванию</option>
-                        <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>По рейтингу</option>
+                        <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>{% trans "Новинки" %}</option>
+                        <option value="price_low" {% if sort_by == 'price_low' %}selected{% endif %}>{% trans "Цена: по возрастанию" %}</option>
+                        <option value="price_high" {% if sort_by == 'price_high' %}selected{% endif %}>{% trans "Цена: по убыванию" %}</option>
+                        <option value="rating" {% if sort_by == 'rating' %}selected{% endif %}>{% trans "По рейтингу" %}</option>
                     </select>
                 </form>
             </div>
@@ -129,15 +130,15 @@
                                 <span class="rating-text">({{ product.reviews_count }})</span>
                             </div>
                             <div class="product-price">
-                                <span class="current-price">{{ product.price }}₽</span>
+                                <span class="current-price">{{ product.price }} сум</span>
                                 {% if product.old_price %}
-                                <span class="old-price">{{ product.old_price }}₽</span>
+                                <span class="old-price">{{ product.old_price }} сум</span>
                                 {% endif %}
                             </div>
                         </div>
                     </a>
                     <button class="btn-add-cart" data-product-id="{{ product.id }}">
-                        <i class="fas fa-shopping-cart"></i> В корзину
+                        <i class="fas fa-shopping-cart"></i> {% trans "В корзину" %}
                     </button>
                 </div>
                 {% endif %}
@@ -145,7 +146,7 @@
             </div>
             {% else %}
             <div class="no-products">
-                <p>Товары не найдены</p>
+                <p>{% trans "Товары не найдены" %}</p>
             </div>
             {% endif %}
         </div>

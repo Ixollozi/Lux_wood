@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.utils.translation import activate, get_language
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib import messages
 from .models import (
     Category, Product, Cart, CartItem, Order, OrderItem,
     Banner, Sponsor, FAQ, FAQCategory, CompanyInfo, Advantage, ContactMessage
@@ -65,8 +66,12 @@ def product_list(request, category_slug=None):
     search_query = request.GET.get('q', '')
     if search_query:
         products = products.filter(
-            Q(name__icontains=search_query) | 
-            Q(description__icontains=search_query)
+            Q(name_ru__icontains=search_query) | 
+            Q(name_en__icontains=search_query) |
+            Q(name_uz__icontains=search_query) |
+            Q(description_ru__icontains=search_query) |
+            Q(description_en__icontains=search_query) |
+            Q(description_uz__icontains=search_query)
         )
     
     # Фильтр по наличию
@@ -222,7 +227,7 @@ def checkout(request):
                 quantity=cart_item.quantity,
                 price=cart_item.product.price
             )
-            order_items_text.append(f"{cart_item.product.name} x{cart_item.quantity} - {cart_item.product.price}₽")
+            order_items_text.append(f"{cart_item.product.get_name()} x{cart_item.quantity} - {cart_item.product.price} сум")
         
         # Отправка email уведомления
         try:
@@ -241,7 +246,7 @@ Email: {order.email}
 Товары:
 {chr(10).join(order_items_text)}
 
-Общая сумма: {order.total_price}₽
+Общая сумма: {order.total_price} сум
 """
             recipient_email = company_info.email if company_info else 'noreply@shopeexpress.com'
             send_mail(
@@ -275,7 +280,7 @@ Email: {order.email}
 {chr(10).join(order_items_text)}
 {comment_text}
 
-💰 Сумма: {order.total_price}₽
+💰 Сумма: {order.total_price} сум
 """
                 requests.post(
                     f'https://api.telegram.org/bot{telegram_bot_token}/sendMessage',
@@ -304,10 +309,29 @@ def order_success(request, order_id):
 
 
 def set_language(request):
+    """Переключение языка с использованием стандартного Django подхода"""
+    from django.utils import translation
+    
     if request.method == 'POST':
         language = request.POST.get('language', 'ru')
-        request.session['language'] = language
-        activate(language)
+        # Проверяем, что язык поддерживается
+        if language in [lang[0] for lang in settings.LANGUAGES]:
+            # Активируем язык для текущего запроса
+            translation.activate(language)
+            # Сохраняем язык в сессии (стандартный ключ для LocaleMiddleware)
+            request.session['django_language'] = language
+            # Создаем ответ с редиректом
+            next_url = request.POST.get('next', request.META.get('HTTP_REFERER', '/'))
+            response = redirect(next_url)
+            # Устанавливаем cookie с языком
+            response.set_cookie(
+                settings.LANGUAGE_COOKIE_NAME, 
+                language, 
+                max_age=365*24*60*60,  # 1 год
+                path=settings.LANGUAGE_COOKIE_PATH,
+                samesite=settings.LANGUAGE_COOKIE_SAMESITE
+            )
+            return response
     return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
@@ -325,6 +349,7 @@ def about(request):
 
 def contact(request):
     company_info = CompanyInfo.load()
+    
     if request.method == 'POST':
         name = request.POST.get('name')
         email = request.POST.get('email')
@@ -342,19 +367,26 @@ def contact(request):
         
         # Отправка email (если настроен)
         try:
-            send_mail(
-                subject=f'Новое сообщение: {subject}',
-                message=f'От: {name} ({email})\nТелефон: {phone}\n\n{message}',
-                from_email=settings.DEFAULT_FROM_EMAIL if hasattr(settings, 'DEFAULT_FROM_EMAIL') else email,
-                recipient_list=[company_info.email],
-                fail_silently=True,
-            )
+            recipient_email = company_info.email if company_info else settings.DEFAULT_FROM_EMAIL
+            if recipient_email:
+                send_mail(
+                    subject=f'Новое сообщение: {subject}',
+                    message=f'От: {name} ({email})\nТелефон: {phone}\n\n{message}',
+                    from_email=settings.DEFAULT_FROM_EMAIL if hasattr(settings, 'DEFAULT_FROM_EMAIL') else email,
+                    recipient_list=[recipient_email],
+                    fail_silently=True,
+                )
         except Exception:
             pass
         
+        from django.utils.translation import gettext as _
+        messages.success(request, _('Ваше сообщение успешно отправлено!'))
         return redirect('contact')
     
-    return render(request, 'store/contact.html', {'company_info': company_info})
+    context = {
+        'company_info': company_info,
+    }
+    return render(request, 'store/contact.html', context)
 
 
 def faq_page(request):

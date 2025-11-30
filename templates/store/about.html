@@ -1,12 +1,13 @@
 {% extends 'store/base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}О нас - ShopExpress{% endblock %}
+{% block title %}{% trans "О нас" %} - ShopExpress{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="page-header">
-        <h1>О нас</h1>
+        <h1>{% trans "О нас" %}</h1>
     </div>
 
     <div class="about-content">
@@ -28,7 +29,7 @@
 
             {% if company_info.mission %}
             <div class="about-section">
-                <h2>Наша миссия</h2>
+                <h2>{% trans "Наша миссия" %}</h2>
                 <div class="about-text">
                     {{ company_info.mission|linebreaks }}
                 </div>
@@ -37,7 +38,7 @@
 
             {% if company_info.values %}
             <div class="about-section">
-                <h2>Наши ценности</h2>
+                <h2>{% trans "Наши ценности" %}</h2>
                 <div class="about-text">
                     {{ company_info.values|linebreaks }}
                 </div>
@@ -46,7 +47,7 @@
 
             {% if company_info.history %}
             <div class="about-section">
-                <h2>История компании</h2>
+                <h2>{% trans "История компании" %}</h2>
                 <div class="about-text">
                     {{ company_info.history|linebreaks }}
                 </div>
@@ -56,7 +57,7 @@
             <div class="about-section">
                 <h2>ShopExpress</h2>
                 <div class="about-text">
-                    <p>Информация о компании будет добавлена в ближайшее время.</p>
+                    <p>{% trans "Информация о компании будет добавлена в ближайшее время." %}</p>
                 </div>
             </div>
         {% endif %}

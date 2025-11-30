@@ -1,5 +1,6 @@
 {% extends 'store/base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}{{ product.name }} - ShopExpress{% endblock %}
 
@@ -13,7 +14,7 @@
                 {% else %}
                 <div class="product-placeholder-large">
                     <i class="fas fa-image"></i>
-                    <p>Изображение отсутствует</p>
+                    <p>{% trans "Изображение отсутствует" %}</p>
                 </div>
                 {% endif %}
             </div>
@@ -35,33 +36,33 @@
             <div class="product-rating-large">
                 <span class="stars">★</span>
                 <span class="rating-value">{{ product.rating }}</span>
-                <span class="reviews-count">({{ product.reviews_count }} отзывов)</span>
+                <span class="reviews-count">({% blocktrans count count=product.reviews_count %}{{ count }} отзыв{% plural %}{{ count }} отзывов{% endblocktrans %})</span>
             </div>
 
             <div class="product-price-large">
-                <span class="current-price">{{ product.price }}₽</span>
+                <span class="current-price">{{ product.price }} сум</span>
                 {% if product.old_price %}
-                <span class="old-price">{{ product.old_price }}₽</span>
-                <span class="discount-text">Скидка {{ product.discount_percent }}%</span>
+                <span class="old-price">{{ product.old_price }} сум</span>
+                <span class="discount-text">{% blocktrans with percent=product.discount_percent %}Скидка {{ percent }}%{% endblocktrans %}</span>
                 {% endif %}
             </div>
 
             <div class="product-stock">
                 {% if product.stock > 0 %}
-                <span class="in-stock"><i class="fas fa-check-circle"></i> В наличии ({{ product.stock }} шт.)</span>
+                <span class="in-stock"><i class="fas fa-check-circle"></i> {% blocktrans with stock=product.stock %}В наличии ({{ stock }} шт.){% endblocktrans %}</span>
                 {% else %}
-                <span class="out-of-stock"><i class="fas fa-times-circle"></i> Нет в наличии</span>
+                <span class="out-of-stock"><i class="fas fa-times-circle"></i> {% trans "Нет в наличии" %}</span>
                 {% endif %}
             </div>
 
             <div class="product-description">
-                <h3>Описание</h3>
+                <h3>{% trans "Описание" %}</h3>
                 <p>{{ product.description }}</p>
             </div>
 
             {% if attributes %}
             <div class="product-attributes">
-                <h3>Характеристики</h3>
+                <h3>{% trans "Характеристики" %}</h3>
                 <table class="attributes-table">
                     {% for attr in attributes %}
                     <tr>
@@ -80,7 +81,7 @@
                     <button class="qty-btn" onclick="changeQuantity(1)">+</button>
                 </div>
                 <button class="btn btn-primary btn-large add-to-cart-btn" data-product-id="{{ product.id }}">
-                    <i class="fas fa-shopping-cart"></i> Добавить в корзину
+                    <i class="fas fa-shopping-cart"></i> {% trans "Добавить в корзину" %}
                 </button>
             </div>
         </div>
@@ -89,7 +90,7 @@
     <!-- Related Products -->
     {% if related_products %}
     <section class="related-products">
-        <h2 class="section-title">Похожие товары</h2>
+        <h2 class="section-title">{% trans "Похожие товары" %}</h2>
         <div class="products-grid">
             {% for product in related_products %}
             {% if product.slug %}
@@ -115,15 +116,15 @@
                             <span class="rating-text">({{ product.reviews_count }})</span>
                         </div>
                         <div class="product-price">
-                            <span class="current-price">{{ product.price }}₽</span>
+                            <span class="current-price">{{ product.price }} сум</span>
                             {% if product.old_price %}
-                            <span class="old-price">{{ product.old_price }}₽</span>
+                            <span class="old-price">{{ product.old_price }} сум</span>
                             {% endif %}
                         </div>
                     </div>
                 </a>
                 <button class="btn-add-cart" data-product-id="{{ product.id }}">
-                    <i class="fas fa-shopping-cart"></i> В корзину
+                    <i class="fas fa-shopping-cart"></i> {% trans "В корзину" %}
                 </button>
             </div>
             {% endif %}

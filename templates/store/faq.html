@@ -1,22 +1,23 @@
 {% extends 'store/base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block title %}FAQ - ShopExpress{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="page-header">
-        <h1>Часто задаваемые вопросы</h1>
+        <h1>{% trans "Часто задаваемые вопросы" %}</h1>
     </div>
 
     <div class="faq-layout">
         {% if categories %}
         <aside class="faq-sidebar">
-            <h3>Категории</h3>
+            <h3>{% trans "Категории" %}</h3>
             <ul class="faq-categories">
                 <li>
                     <a href="{% url 'faq' %}" {% if not selected_category %}class="active"{% endif %}>
-                        Все вопросы
+                        {% trans "Все вопросы" %}
                     </a>
                 </li>
                 {% for cat in categories %}
@@ -47,7 +48,7 @@
             </div>
             {% else %}
             <div class="no-faqs">
-                <p>Вопросы не найдены</p>
+                <p>{% trans "Вопросы не найдены" %}</p>
             </div>
             {% endif %}
         </div>

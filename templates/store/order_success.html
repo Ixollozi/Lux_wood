@@ -1,7 +1,8 @@
 {% extends 'store/base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Заказ оформлен - ShopExpress{% endblock %}
+{% block title %}{% trans "Заказ оформлен" %} - ShopExpress{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -9,12 +10,12 @@
         <div class="success-icon">
             <i class="fas fa-check-circle"></i>
         </div>
-        <h1>Заказ успешно оформлен!</h1>
-        <p class="order-number">Номер заказа: #{{ order.id }}</p>
-        <p>Спасибо за ваш заказ. Мы свяжемся с вами в ближайшее время.</p>
+        <h1>{% trans "Заказ успешно оформлен!" %}</h1>
+        <p class="order-number">{% blocktrans with order_id=order.id %}Номер заказа: #{{ order_id }}{% endblocktrans %}</p>
+        <p>{% trans "Спасибо за ваш заказ. Мы свяжемся с вами в ближайшее время." %}</p>
         <div class="success-actions">
-            <a href="{% url 'home' %}" class="btn btn-primary">Вернуться на главную</a>
-            <a href="{% url 'product_list_all' %}" class="btn btn-secondary">Продолжить покупки</a>
+            <a href="{% url 'home' %}" class="btn btn-primary">{% trans "Вернуться на главную" %}</a>
+            <a href="{% url 'product_list_all' %}" class="btn btn-secondary">{% trans "Продолжить покупки" %}</a>
         </div>
     </div>
 </div>

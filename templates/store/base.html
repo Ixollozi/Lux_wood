@@ -1,10 +1,11 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="{{ current_language|default:'ru' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>{% block title %}Интернет-магазин{% endblock %}</title>
+    <title>{% block title %}{% trans "Lux Wood" %}{% endblock %}</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
@@ -16,16 +17,16 @@
             <div class="header-content">
                 <div class="logo">
                     <a href="{% url 'home' %}">
-                        <h1>ShopExpress</h1>
+                        <h1>Lux Wood</h1>
                     </a>
                 </div>
                 
                 <div class="search-bar">
                     <form method="get" action="{% url 'product_list_all' %}">
                         <div class="catalog-dropdown">
-                            <a href="{% url 'product_list_all' %}" style="text-decoration: none;"><button type="button" class="catalog-btn" id="catalogBtn"><i class="fas fa-bars"></i> Каталог</button></a>
+                            <a href="{% url 'product_list_all' %}" style="text-decoration: none;"><button type="button" class="catalog-btn" id="catalogBtn"><i class="fas fa-bars"></i> {% trans "Каталог" %}</button></a>
                         </div>
-                        <input type="text" name="q" placeholder="Искать на ShopExpress" value="{{ search_query|default:'' }}">
+                        <input type="text" name="q" placeholder="{% trans 'Искать на Lux Wood' %}" value="{{ search_query|default:'' }}">
                         <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
                     </form>
                 </div>
@@ -45,7 +46,7 @@
                     </form>
                     <a href="{% url 'cart' %}" class="header-action-item cart-icon">
                         <i class="fas fa-shopping-cart"></i>
-                        <span>Корзина</span>
+                        <span>{% trans "Корзина" %}</span>
                         {% if cart_items_count > 0 %}
                         <span class="cart-count">{{ cart_items_count }}</span>
                         {% endif %}
@@ -60,15 +61,15 @@
     <nav class="main-nav">
         <div class="container">
             <ul class="nav-menu">
-                <li><a href="{% url 'home' %}">Главная</a></li>
+                <li><a href="{% url 'home' %}">{% trans "Главная" %}</a></li>
                 {% for category in categories|slice:":5" %}
                 {% if category.slug %}
                 <li><a href="{% url 'product_list' category.slug %}" {% if category.slug == request.resolver_match.kwargs.category_slug|default:'' %}class="active"{% endif %}>{{ category.name }}</a></li>
                 {% endif %}
                 {% endfor %}
-                <li><a href="{% url 'about' %}">О нас</a></li>
-                <li><a href="{% url 'contact' %}">Контакты</a></li>
-                <li><a href="{% url 'faq' %}">FAQ</a></li>
+                <li><a href="{% url 'about' %}">{% trans "О нас" %}</a></li>
+                <li><a href="{% url 'contact' %}">{% trans "Контакты" %}</a></li>
+                <li><a href="{% url 'faq' %}">{% trans "FAQ" %}</a></li>
             </ul>
         </div>
     </nav>
@@ -95,33 +96,33 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>О нас</h3>
-                    <p>Лучший интернет-магазин с широким ассортиментом товаров по выгодным ценам.</p>
-                    <p><a href="{% url 'about' %}">Подробнее о компании</a></p>
+                    <h3>{% trans "О нас" %}</h3>
+                    <p>{% trans "Лучший интернет-магазин с широким ассортиментом товаров по выгодным ценам." %}</p>
+                    <p><a href="{% url 'about' %}">{% trans "Подробнее о компании" %}</a></p>
                 </div>
                 <div class="footer-section">
-                    <h3>Покупателям</h3>
+                    <h3>{% trans "Покупателям" %}</h3>
                     <ul>
-                        <li><a href="{% url 'home' %}">Главная</a></li>
-                        <li><a href="{% url 'product_list_all' %}">Каталог</a></li>
-                        <li><a href="{% url 'about' %}">О нас</a></li>
-                        <li><a href="{% url 'contact' %}">Контакты</a></li>
-                        <li><a href="{% url 'faq' %}">FAQ</a></li>
+                        <li><a href="{% url 'home' %}">{% trans "Главная" %}</a></li>
+                        <li><a href="{% url 'product_list_all' %}">{% trans "Каталог" %}</a></li>
+                        <li><a href="{% url 'about' %}">{% trans "О нас" %}</a></li>
+                        <li><a href="{% url 'contact' %}">{% trans "Контакты" %}</a></li>
+                        <li><a href="{% url 'faq' %}">{% trans "FAQ" %}</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
-                    <h3>Контакты</h3>
+                    <h3>{% trans "Контакты" %}</h3>
                     {% if company_info %}
-                    <p>Email: <a href="mailto:{{ company_info.email|default:'info@shopeexpress.com' }}">{{ company_info.email|default:'info@shopeexpress.com' }}</a></p>
-                    <p>Телефон: <a href="tel:{{ company_info.phone|default:'+7 (999) 123-45-67' }}">{{ company_info.phone|default:'+7 (999) 123-45-67' }}</a></p>
+                    <p>{% trans "Email" %}: <a href="mailto:{{ company_info.email|default:'info@shopeexpress.com' }}">{{ company_info.email|default:'info@shopeexpress.com' }}</a></p>
+                    <p>{% trans "Телефон" %}: <a href="tel:{{ company_info.phone|default:'+7 (999) 123-45-67' }}">{{ company_info.phone|default:'+7 (999) 123-45-67' }}</a></p>
                     {% else %}
-                    <p>Email: info@shopeexpress.com</p>
-                    <p>Телефон: +7 (999) 123-45-67</p>
+                    <p>{% trans "Email" %}: info@shopeexpress.com</p>
+                    <p>{% trans "Телефон" %}: +7 (999) 123-45-67</p>
                     {% endif %}
-                    <p><a href="{% url 'contact' %}">Связаться с нами</a></p>
+                    <p><a href="{% url 'contact' %}">{% trans "Связаться с нами" %}</a></p>
                 </div>
                 <div class="footer-section">
-                    <h3>Социальные сети</h3>
+                    <h3>{% trans "Социальные сети" %}</h3>
                     <div class="social-links">
                         {% if company_info %}
                             {% if company_info.facebook %}
@@ -143,9 +144,6 @@
                         {% endif %}
                     </div>
                 </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 ShopExpress. Все права защищены.</p>
             </div>
         </div>
     </footer>

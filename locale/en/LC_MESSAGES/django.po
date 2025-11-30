@@ -1,0 +1,391 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: LuxWood 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-30 04:46+0500\n"
+"PO-Revision-Date: 2025-11-30 04:46+0500\n"
+"Last-Translator: LuxWood Team\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: .\templates\admin\base_site.html:4
+msgid "Django site admin"
+msgstr "Django site admin"
+
+#: .\templates\store\about.html:5 .\templates\store\about.html:10
+#: .\templates\store\base.html:70 .\templates\store\base.html:99
+#: .\templates\store\base.html:108
+msgid "О нас"
+msgstr "About Us"
+
+#: .\templates\store\about.html:32
+msgid "Наша миссия"
+msgstr "Our Mission"
+
+#: .\templates\store\about.html:41
+msgid "Наши ценности"
+msgstr "Our Values"
+
+#: .\templates\store\about.html:50
+msgid "История компании"
+msgstr "Company History"
+
+#: .\templates\store\about.html:60
+msgid "Информация о компании будет добавлена в ближайшее время."
+msgstr "Company information will be added soon."
+
+#: .\templates\store\base.html:8
+msgid "Lux Wood"
+msgstr "Lux Wood"
+
+#: .\templates\store\base.html:27 .\templates\store\base.html:107
+msgid "Каталог"
+msgstr "Catalog"
+
+#: .\templates\store\base.html:29
+msgid "Искать на Lux Wood"
+msgstr "Search on Lux Wood"
+
+#: .\templates\store\base.html:49 .\templates\store\cart.html:5
+#: .\templates\store\cart.html:9
+msgid "Корзина"
+msgstr "Cart"
+
+#: .\templates\store\base.html:64 .\templates\store\base.html:106
+#: .\templates\store\home.html:5
+msgid "Главная"
+msgstr "Home"
+
+#: .\templates\store\base.html:71 .\templates\store\base.html:109
+#: .\templates\store\base.html:114 .\templates\store\contact.html:5
+#: .\templates\store\contact.html:10
+msgid "Контакты"
+msgstr "Contacts"
+
+#: .\templates\store\base.html:72 .\templates\store\base.html:110
+msgid "FAQ"
+msgstr "FAQ"
+
+#: .\templates\store\base.html:100
+msgid ""
+"Лучший интернет-магазин с широким ассортиментом товаров по выгодным ценам."
+msgstr ""
+"The best online store with a wide range of products at competitive prices."
+
+#: .\templates\store\base.html:101
+msgid "Подробнее о компании"
+msgstr "Learn more about the company"
+
+#: .\templates\store\base.html:104
+msgid "Покупателям"
+msgstr "For Customers"
+
+#: .\templates\store\base.html:116 .\templates\store\base.html:119
+#: .\templates\store\contact.html:43 .\templates\store\contact.html:80
+#: .\templates\store\contact.html:116
+msgid "Email"
+msgstr "Email"
+
+#: .\templates\store\base.html:117 .\templates\store\base.html:120
+#: .\templates\store\checkout.html:34 .\templates\store\contact.html:35
+#: .\templates\store\contact.html:72 .\templates\store\contact.html:108
+#: .\templates\store\contact.html:154
+msgid "Телефон"
+msgstr "Phone"
+
+#: .\templates\store\base.html:122
+msgid "Связаться с нами"
+msgstr "Contact Us"
+
+#: .\templates\store\base.html:125
+msgid "Социальные сети"
+msgstr "Social Networks"
+
+#: .\templates\store\cart.html:48 .\templates\store\checkout.html:75
+msgid "Итого"
+msgstr "Total"
+
+#: .\templates\store\cart.html:50
+msgid "Товаров"
+msgstr "Items"
+
+#: .\templates\store\cart.html:54
+msgid "Сумма"
+msgstr "Amount"
+
+#: .\templates\store\cart.html:58
+msgid "Оформить заказ"
+msgstr "Checkout"
+
+#: .\templates\store\cart.html:66
+msgid "Ваша корзина пуста"
+msgstr "Your cart is empty"
+
+#: .\templates\store\cart.html:67
+msgid "Добавьте товары в корзину, чтобы продолжить покупки"
+msgstr "Add items to your cart to continue shopping"
+
+#: .\templates\store\cart.html:68
+msgid "Перейти к каталогу"
+msgstr "Go to Catalog"
+
+#: .\templates\store\checkout.html:5 .\templates\store\checkout.html:9
+msgid "Оформление заказа"
+msgstr "Checkout"
+
+#: .\templates\store\checkout.html:15
+msgid "Данные получателя"
+msgstr "Recipient Information"
+
+#: .\templates\store\checkout.html:19 .\templates\store\contact.html:146
+msgid "Имя"
+msgstr "First Name"
+
+#: .\templates\store\checkout.html:23
+msgid "Фамилия"
+msgstr "Last Name"
+
+#: .\templates\store\checkout.html:39
+msgid "Адрес доставки"
+msgstr "Delivery Address"
+
+#: .\templates\store\checkout.html:45
+msgid "Город"
+msgstr "City"
+
+#: .\templates\store\checkout.html:49
+msgid "Почтовый индекс"
+msgstr "Postal Code"
+
+#: .\templates\store\checkout.html:55
+msgid "Комментарий к заказу"
+msgstr "Order Comment"
+
+#: .\templates\store\checkout.html:56
+msgid "Дополнительная информация для доставки (необязательно)"
+msgstr "Additional delivery information (optional)"
+
+#: .\templates\store\checkout.html:60
+msgid "Подтвердить заказ"
+msgstr "Confirm Order"
+
+#: .\templates\store\checkout.html:67
+msgid "Ваш заказ"
+msgstr "Your Order"
+
+#: .\templates\store\contact.html:15
+msgid "Свяжитесь с нами"
+msgstr "Contact Us"
+
+#: .\templates\store\contact.html:27 .\templates\store\contact.html:64
+#: .\templates\store\contact.html:100
+msgid "Адрес"
+msgstr "Address"
+
+#: .\templates\store\contact.html:52 .\templates\store\contact.html:89
+msgid "График работы"
+msgstr "Working Hours"
+
+#: .\templates\store\contact.html:101
+msgid "Москва"
+msgstr "Moscow"
+
+#: .\templates\store\contact.html:142
+msgid "Форма обратной связи"
+msgstr "Contact Form"
+
+#: .\templates\store\contact.html:158
+msgid "Тема"
+msgstr "Subject"
+
+#: .\templates\store\contact.html:162
+msgid "Сообщение"
+msgstr "Message"
+
+#: .\templates\store\contact.html:165
+msgid "Отправить"
+msgstr "Send"
+
+#: .\templates\store\contact.html:174 .\templates\store\contact.html:196
+#: .\templates\store\contact.html:204 .\templates\store\contact.html:225
+msgid "Мы на карте"
+msgstr "We on the Map"
+
+#: .\templates\store\faq.html:10 .\templates\store\home.html:251
+msgid "Часто задаваемые вопросы"
+msgstr "Frequently Asked Questions"
+
+#: .\templates\store\faq.html:16 .\templates\store\product_list.html:21
+msgid "Категории"
+msgstr "Categories"
+
+#: .\templates\store\faq.html:20 .\templates\store\home.html:266
+msgid "Все вопросы"
+msgstr "All Questions"
+
+#: .\templates\store\faq.html:51
+msgid "Вопросы не найдены"
+msgstr "Questions not found"
+
+#: .\templates\store\home.html:41
+msgid "Категории товаров"
+msgstr "Product Categories"
+
+#: .\templates\store\home.html:65
+msgid "Сейчас популярно"
+msgstr "Currently Popular"
+
+#: .\templates\store\home.html:99 .\templates\store\home.html:147
+#: .\templates\store\home.html:195 .\templates\store\product_detail.html:127
+#: .\templates\store\product_list.html:141
+msgid "В корзину"
+msgstr "Add to Cart"
+
+#: .\templates\store\home.html:113
+msgid "Хиты продаж"
+msgstr "Bestsellers"
+
+#: .\templates\store\home.html:161 .\templates\store\product_list.html:96
+msgid "Новинки"
+msgstr "New Arrivals"
+
+#: .\templates\store\home.html:209
+msgid "Почему выбирают нас?"
+msgstr "Why Choose Us?"
+
+#: .\templates\store\home.html:229
+msgid "Наши партнеры"
+msgstr "Our Partners"
+
+#: .\templates\store\order_success.html:5
+msgid "Заказ оформлен"
+msgstr "Order Placed"
+
+#: .\templates\store\order_success.html:13
+msgid "Заказ успешно оформлен!"
+msgstr "Order successfully placed!"
+
+#: .\templates\store\order_success.html:14
+#, python-format
+msgid "Номер заказа: #%(order_id)s"
+msgstr "Order Number: #%(order_id)s"
+
+#: .\templates\store\order_success.html:15
+msgid "Спасибо за ваш заказ. Мы свяжемся с вами в ближайшее время."
+msgstr "Thank you for your order. We will contact you soon."
+
+#: .\templates\store\order_success.html:17
+msgid "Вернуться на главную"
+msgstr "Return to Home"
+
+#: .\templates\store\order_success.html:18
+msgid "Продолжить покупки"
+msgstr "Continue Shopping"
+
+#: .\templates\store\product_detail.html:17
+msgid "Изображение отсутствует"
+msgstr "Image not available"
+
+#: .\templates\store\product_detail.html:39
+#, python-format
+msgid "%(count)s отзыв"
+msgid_plural "%(count)s отзывов"
+msgstr[0] "%(count)s review"
+msgstr[1] "%(count)s reviews"
+
+#: .\templates\store\product_detail.html:46
+#, python-format
+msgid "Скидка %(percent)s%%"
+msgstr "Discount %(percent)s%%"
+
+#: .\templates\store\product_detail.html:52
+#, python-format
+msgid "В наличии (%(stock)s шт.)"
+msgstr "In Stock (%(stock)s pcs.)"
+
+#: .\templates\store\product_detail.html:54
+#: .\templates\store\product_list.html:56
+msgid "Нет в наличии"
+msgstr "Out of Stock"
+
+#: .\templates\store\product_detail.html:59
+msgid "Описание"
+msgstr "Description"
+
+#: .\templates\store\product_detail.html:65
+msgid "Характеристики"
+msgstr "Specifications"
+
+#: .\templates\store\product_detail.html:84
+msgid "Добавить в корзину"
+msgstr "Add to Cart"
+
+#: .\templates\store\product_detail.html:93
+msgid "Похожие товары"
+msgstr "Related Products"
+
+#: .\templates\store\product_list.html:5 .\templates\store\product_list.html:10
+#: .\templates\store\product_list.html:25
+msgid "Все товары"
+msgstr "All Products"
+
+#: .\templates\store\product_list.html:12
+msgid "Результаты поиска"
+msgstr "Search Results"
+
+#: .\templates\store\product_list.html:42
+msgid "Наличие"
+msgstr "Availability"
+
+#: .\templates\store\product_list.html:54
+msgid "Все"
+msgstr "All"
+
+#: .\templates\store\product_list.html:55
+msgid "В наличии"
+msgstr "In Stock"
+
+#: .\templates\store\product_list.html:63
+msgid "Цена"
+msgstr "Price"
+
+#: .\templates\store\product_list.html:72
+msgid "От"
+msgstr "From"
+
+#: .\templates\store\product_list.html:73
+msgid "До"
+msgstr "To"
+
+#: .\templates\store\product_list.html:74
+msgid "Применить"
+msgstr "Apply"
+
+#: .\templates\store\product_list.html:81
+msgid "Сортировка"
+msgstr "Sort By"
+
+#: .\templates\store\product_list.html:97
+msgid "Цена: по возрастанию"
+msgstr "Price: Low to High"
+
+#: .\templates\store\product_list.html:98
+msgid "Цена: по убыванию"
+msgstr "Price: High to Low"
+
+#: .\templates\store\product_list.html:99
+msgid "По рейтингу"
+msgstr "By Rating"
+
+#: .\templates\store\product_list.html:149
+msgid "Товары не найдены"
+msgstr "Products not found"

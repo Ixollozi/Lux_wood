@@ -1,25 +1,26 @@
 {% extends 'store/base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Оформление заказа - ShopExpress{% endblock %}
+{% block title %}{% trans "Оформление заказа" %} - ShopExpress{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1 class="page-title">Оформление заказа</h1>
+    <h1 class="page-title">{% trans "Оформление заказа" %}</h1>
     
     <div class="checkout-layout">
         <div class="checkout-form-section">
             <form method="post" class="checkout-form">
                 {% csrf_token %}
-                <h2>Данные получателя</h2>
+                <h2>{% trans "Данные получателя" %}</h2>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="first_name">Имя *</label>
+                        <label for="first_name">{% trans "Имя" %} *</label>
                         <input type="text" id="first_name" name="first_name" required>
                     </div>
                     <div class="form-group">
-                        <label for="last_name">Фамилия *</label>
+                        <label for="last_name">{% trans "Фамилия" %} *</label>
                         <input type="text" id="last_name" name="last_name" required>
                     </div>
                 </div>
@@ -30,49 +31,49 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="phone">Телефон *</label>
+                    <label for="phone">{% trans "Телефон" %} *</label>
                     <input type="tel" id="phone" name="phone" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="address">Адрес доставки *</label>
+                    <label for="address">{% trans "Адрес доставки" %} *</label>
                     <textarea id="address" name="address" rows="3" required></textarea>
                 </div>
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="city">Город *</label>
+                        <label for="city">{% trans "Город" %} *</label>
                         <input type="text" id="city" name="city" required>
                     </div>
                     <div class="form-group">
-                        <label for="postal_code">Почтовый индекс *</label>
+                        <label for="postal_code">{% trans "Почтовый индекс" %} *</label>
                         <input type="text" id="postal_code" name="postal_code" required>
                     </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="comment">Комментарий к заказу</label>
-                    <textarea id="comment" name="comment" rows="3" placeholder="Дополнительная информация для доставки (необязательно)"></textarea>
+                    <label for="comment">{% trans "Комментарий к заказу" %}</label>
+                    <textarea id="comment" name="comment" rows="3" placeholder="{% trans 'Дополнительная информация для доставки (необязательно)' %}"></textarea>
                 </div>
                 
                 <button type="submit" class="btn btn-primary btn-large btn-block">
-                    Подтвердить заказ
+                    {% trans "Подтвердить заказ" %}
                 </button>
             </form>
         </div>
         
         <div class="checkout-summary">
             <div class="summary-card">
-                <h3>Ваш заказ</h3>
+                <h3>{% trans "Ваш заказ" %}</h3>
                 {% for item in cart.items.all %}
                 <div class="order-item">
                     <span>{{ item.product.name }} x{{ item.quantity }}</span>
-                    <span>{{ item.total_price }}₽</span>
+                    <span>{{ item.total_price }} сум</span>
                 </div>
                 {% endfor %}
                 <div class="summary-total">
-                    <span>Итого:</span>
-                    <span class="total-price">{{ cart.total_price }}₽</span>
+                    <span>{% trans "Итого" %}:</span>
+                    <span class="total-price">{{ cart.total_price }} сум</span>
                 </div>
             </div>
         </div>

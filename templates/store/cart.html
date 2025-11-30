@@ -1,11 +1,12 @@
 {% extends 'store/base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Корзина - ShopExpress{% endblock %}
+{% block title %}{% trans "Корзина" %} - ShopExpress{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1 class="page-title">Корзина</h1>
+    <h1 class="page-title">{% trans "Корзина" %}</h1>
     
     {% if cart.items.all %}
     <div class="cart-layout">
@@ -23,7 +24,7 @@
                 </div>
                 <div class="cart-item-info">
                     <h3>{% if item.product.slug %}<a href="{% url 'product_detail' item.product.slug %}">{{ item.product.name }}</a>{% else %}{{ item.product.name }}{% endif %}</h3>
-                    <p class="cart-item-price">{{ item.product.price }}₽</p>
+                    <p class="cart-item-price">{{ item.product.price }} сум</p>
                 </div>
                 <div class="cart-item-quantity">
                     <button class="qty-btn" onclick="updateCartItem({{ item.id }}, -1)">-</button>
@@ -31,7 +32,7 @@
                     <button class="qty-btn" onclick="updateCartItem({{ item.id }}, 1)">+</button>
                 </div>
                 <div class="cart-item-total">
-                    <span class="item-total-price">{{ item.total_price }}₽</span>
+                    <span class="item-total-price">{{ item.total_price }} сум</span>
                 </div>
                 <div class="cart-item-remove">
                     <button class="btn-remove" onclick="removeCartItem({{ item.id }})">
@@ -44,17 +45,17 @@
         
         <div class="cart-summary">
             <div class="summary-card">
-                <h3>Итого</h3>
+                <h3>{% trans "Итого" %}</h3>
                 <div class="summary-row">
-                    <span>Товаров:</span>
+                    <span>{% trans "Товаров" %}:</span>
                     <span id="total-items">{{ cart.total_items }}</span>
                 </div>
                 <div class="summary-row">
-                    <span>Сумма:</span>
-                    <span class="total-price" id="cart-total">{{ cart.total_price }}₽</span>
+                    <span>{% trans "Сумма" %}:</span>
+                    <span class="total-price" id="cart-total">{{ cart.total_price }} сум</span>
                 </div>
                 <a href="{% url 'checkout' %}" class="btn btn-primary btn-large btn-block">
-                    Оформить заказ
+                    {% trans "Оформить заказ" %}
                 </a>
             </div>
         </div>
@@ -62,9 +63,9 @@
     {% else %}
     <div class="empty-cart">
         <i class="fas fa-shopping-cart"></i>
-        <h2>Ваша корзина пуста</h2>
-        <p>Добавьте товары в корзину, чтобы продолжить покупки</p>
-        <a href="{% url 'product_list_all' %}" class="btn btn-primary">Перейти к каталогу</a>
+        <h2>{% trans "Ваша корзина пуста" %}</h2>
+        <p>{% trans "Добавьте товары в корзину, чтобы продолжить покупки" %}</p>
+        <a href="{% url 'product_list_all' %}" class="btn btn-primary">{% trans "Перейти к каталогу" %}</a>
     </div>
     {% endif %}
 </div>

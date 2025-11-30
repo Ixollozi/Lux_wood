@@ -113,13 +113,13 @@ function updateCartItem(itemId, delta) {
             // Update item total
             const itemTotal = document.querySelector(`[data-item-id="${itemId}"] .item-total-price`);
             if (itemTotal) {
-                itemTotal.textContent = data.item_total.toFixed(2) + '₽';
+                itemTotal.textContent = data.item_total.toFixed(2) + ' сум';
             }
             
             // Update cart total
             const cartTotal = document.getElementById('cart-total');
             if (cartTotal) {
-                cartTotal.textContent = data.cart_total.toFixed(2) + '₽';
+                cartTotal.textContent = data.cart_total.toFixed(2) + ' сум';
             }
             
             // Update total items
@@ -179,7 +179,7 @@ function removeCartItem(itemId) {
             // Update cart total
             const cartTotal = document.getElementById('cart-total');
             if (cartTotal) {
-                cartTotal.textContent = data.cart_total.toFixed(2) + '₽';
+                cartTotal.textContent = data.cart_total.toFixed(2) + ' сум';
             }
             
             // Update total items
