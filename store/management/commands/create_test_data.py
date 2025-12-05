@@ -28,7 +28,7 @@ class Command(BaseCommand):
         categories = {}
         for cat_data in categories_data:
             parent, created = Category.objects.get_or_create(
-                name=cat_data['name'],
+                name_ru=cat_data['name'],
                 defaults={'parent': None}
             )
             if created:
@@ -41,7 +41,7 @@ class Command(BaseCommand):
                 # Используем уникальный ключ для дочерних категорий
                 child_key = f"{cat_data['name']}_{child_name}"
                 child, created = Category.objects.get_or_create(
-                    name=child_name,
+                    name_ru=child_name,
                     parent=parent,
                     defaults={}
                 )
@@ -106,7 +106,7 @@ class Command(BaseCommand):
             # Если все еще не найдено, ищем по имени в базе данных
             if not category:
                 try:
-                    category = Category.objects.filter(name=category_name).first()
+                    category = Category.objects.filter(name_ru=category_name).first()
                 except:
                     pass
             
@@ -117,9 +117,9 @@ class Command(BaseCommand):
                     category = Category.objects.first()
             
             product = Product.objects.create(
-                name=prod_data['name'],
+                name_ru=prod_data['name'],
                 category=category,
-                description=prod_data['description'],
+                description_ru=prod_data['description'],
                 price=Decimal(str(prod_data['price'])),
                 old_price=Decimal(str(prod_data['old_price'])) if prod_data.get('old_price') else None,
                 stock=prod_data['stock'],

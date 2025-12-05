@@ -51,17 +51,17 @@ class Command(BaseCommand):
             created = True
         
         if created or not company_info.logo:
-            company_info.name = 'Мебельный Дом "Комфорт"'
-            company_info.about_text = 'Мы - ведущий интернет-магазин мебели и товаров для дома. Работаем с 2010 года, предлагая качественную продукцию по доступным ценам. Наша миссия - сделать ваш дом уютным и комфортным.'
-            company_info.mission = 'Предоставлять качественную мебель и товары для дома, создавая комфорт и уют в каждом доме.'
-            company_info.values = 'Качество, Надежность, Клиентоориентированность, Инновации'
-            company_info.history = 'Основанная в 2010 году, наша компания выросла из небольшого магазина в крупный интернет-ритейлер. Мы гордимся тем, что обслужили более 100,000 довольных клиентов.'
+            company_info.name_ru = 'Мебельный Дом "Комфорт"'
+            company_info.about_text_ru = 'Мы - ведущий интернет-магазин мебели и товаров для дома. Работаем с 2010 года, предлагая качественную продукцию по доступным ценам. Наша миссия - сделать ваш дом уютным и комфортным.'
+            company_info.mission_ru = 'Предоставлять качественную мебель и товары для дома, создавая комфорт и уют в каждом доме.'
+            company_info.values_ru = 'Качество, Надежность, Клиентоориентированность, Инновации'
+            company_info.history_ru = 'Основанная в 2010 году, наша компания выросла из небольшого магазина в крупный интернет-ритейлер. Мы гордимся тем, что обслужили более 100,000 довольных клиентов.'
             company_info.email = 'info@mebel-comfort.ru'
             company_info.phone = '+7 (495) 123-45-67'
-            company_info.address = 'г. Москва, ул. Торговая, д. 15, офис 201'
-            company_info.city = 'Москва'
+            company_info.address_ru = 'г. Москва, ул. Торговая, д. 15, офис 201'
+            company_info.city_ru = 'Москва'
             company_info.postal_code = '123456'
-            company_info.working_hours = 'Пн-Пт: 9:00 - 20:00, Сб-Вс: 10:00 - 18:00'
+            company_info.working_hours_ru = 'Пн-Пт: 9:00 - 20:00, Сб-Вс: 10:00 - 18:00'
             company_info.map_url = 'https://yandex.ru/maps/-/CCUqMZqH0C'
             company_info.latitude = Decimal('55.7558')
             company_info.longitude = Decimal('37.6173')
@@ -104,8 +104,8 @@ class Command(BaseCommand):
         Banner.objects.all().delete()
         for i, banner_data in enumerate(banners_data):
             banner = Banner.objects.create(
-                title=banner_data['title'],
-                description=banner_data['description'],
+                title_ru=banner_data['title'],
+                description_ru=banner_data['description'],
                 order=i,
                 is_active=True
             )
@@ -126,7 +126,7 @@ class Command(BaseCommand):
         Sponsor.objects.all().delete()
         for i, sponsor_data in enumerate(sponsors_data):
             sponsor = Sponsor.objects.create(
-                name=sponsor_data['name'],
+                name_ru=sponsor_data['name'],
                 website=sponsor_data['website'],
                 order=i,
                 is_active=True
@@ -173,8 +173,8 @@ class Command(BaseCommand):
         Advantage.objects.all().delete()
         for i, adv_data in enumerate(advantages_data):
             Advantage.objects.create(
-                title=adv_data['title'],
-                description=adv_data['description'],
+                title_ru=adv_data['title'],
+                description_ru=adv_data['description'],
                 icon=adv_data['icon'],
                 order=i,
                 is_active=True
@@ -194,7 +194,7 @@ class Command(BaseCommand):
         FAQCategory.objects.all().delete()
         for cat_data in faq_categories_data:
             category = FAQCategory.objects.create(
-                name=cat_data['name'],
+                name_ru=cat_data['name'],
                 order=cat_data['order']
             )
             faq_categories[cat_data['name']] = category
@@ -257,8 +257,8 @@ class Command(BaseCommand):
         for faq_data in faqs_data:
             FAQ.objects.create(
                 category=faq_categories[faq_data['category']],
-                question=faq_data['question'],
-                answer=faq_data['answer'],
+                question_ru=faq_data['question'],
+                answer_ru=faq_data['answer'],
                 order=faq_data['order'],
                 is_active=True
             )
@@ -301,7 +301,7 @@ class Command(BaseCommand):
             # Определяем тип товара по названию
             product_type = None
             for key in attributes_templates.keys():
-                if key.lower() in product.name.lower():
+                if key.lower() in product.name_ru.lower():
                     product_type = key
                     break
             
@@ -318,11 +318,11 @@ class Command(BaseCommand):
             for i, attr_data in enumerate(attributes):
                 ProductAttribute.objects.create(
                     product=product,
-                    name=attr_data['name'],
-                    value=attr_data['value'],
+                    name_ru=attr_data['name'],
+                    value_ru=attr_data['value'],
                     order=i
                 )
-            self.stdout.write(f'✓ Добавлены характеристики для: {product.name}')
+            self.stdout.write(f'✓ Добавлены характеристики для: {product.name_ru}')
 
         # 8. Product Images (дополнительные изображения для товаров)
         self.stdout.write('Создание дополнительных изображений товаров...')
@@ -333,12 +333,12 @@ class Command(BaseCommand):
             existing_images_count = product.images.count()
             if existing_images_count < 2:
                 for i in range(2 - existing_images_count):
-                    img_file = self.create_image_file(800, 600, (220, 220, 220), f'{product.name[:15]} {i+1}')
+                    img_file = self.create_image_file(800, 600, (220, 220, 220), f'{product.name_ru[:15]} {i+1}')
                     ProductImage.objects.create(
                         product=product,
                         image=img_file
                     )
-                self.stdout.write(f'✓ Добавлены изображения для: {product.name}')
+                self.stdout.write(f'✓ Добавлены изображения для: {product.name_ru}')
 
         # 9. Contact Messages (тестовые сообщения)
         self.stdout.write('Создание тестовых сообщений...')
