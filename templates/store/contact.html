@@ -132,33 +132,51 @@
     </div>
 
     {% if company_info %}
-        {% if company_info.latitude and company_info.longitude %}
+        {% if company_info.map_url %}
         <div class="map-container">
             <h2>{% trans "Мы на карте" %}</h2>
-            <div id="map" style="width: 100%; height: 400px;"></div>
+            <div class="map-wrapper">
+                <iframe 
+                    id="map-iframe"
+                    data-map-url="{{ company_info.map_url }}"
+                    width="100%" 
+                    height="400" 
+                    style="border:0;" 
+                    allowfullscreen="true" 
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
         </div>
-        <!-- Google Maps API - замените YOUR_API_KEY на ваш ключ API -->
-        <!-- Получить ключ можно здесь: https://console.cloud.google.com/ -->
+        <script src="{% static 'js/maps.js' %}"></script>
+        {% elif company_info.latitude and company_info.longitude %}
+        <div class="map-container">
+            <h2>{% trans "Мы на карте" %}</h2>
+            <div class="map-wrapper">
+                <div id="yandex-map" style="width: 100%; height: 400px;"></div>
+            </div>
+        </div>
+        <script src="https://api-maps.yandex.ru/2.1/?apikey=&lang=ru_RU" type="text/javascript"></script>
         <script>
-            function initMap() {
-                var location = {lat: {{ company_info.latitude }}, lng: {{ company_info.longitude }}};
-                var map = new google.maps.Map(document.getElementById('map'), {
+            ymaps.ready(function () {
+                var myMap = new ymaps.Map('yandex-map', {
+                    center: [{{ company_info.latitude }}, {{ company_info.longitude }}],
                     zoom: 15,
-                    center: location
+                    controls: ['zoomControl', 'fullscreenControl', 'typeSelector', 'geolocationControl']
                 });
-                var marker = new google.maps.Marker({
-                    position: location,
-                    map: map,
-                    title: '{{ company_info.get_name|default:"Lux Wood" }}'
+                
+                var myPlacemark = new ymaps.Placemark([{{ company_info.latitude }}, {{ company_info.longitude }}], {
+                    balloonContentHeader: '{{ company_info.name_ru|default:"Lux Wood"|escapejs }}',
+                    balloonContentBody: '{% if company_info.address_ru %}{{ company_info.address_ru|escapejs }}<br>{% endif %}{{ company_info.city_ru|default:"Москва"|escapejs }}',
+                    balloonContentFooter: '{% if company_info.phone %}{{ company_info.phone|escapejs }}{% endif %}',
+                    hintContent: '{{ company_info.name_ru|default:"Lux Wood"|escapejs }}'
+                }, {
+                    preset: 'islands#greenDotIcon'
                 });
-            }
+                
+                myMap.geoObjects.add(myPlacemark);
+            });
         </script>
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
-        {% elif company_info.map_url %}
-        <div class="map-container">
-            <h2>{% trans "Мы на карте" %}</h2>
-            <iframe src="{{ company_info.map_url }}" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-        </div>
         {% endif %}
     {% endif %}
 </div>
