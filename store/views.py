@@ -32,10 +32,10 @@ def get_or_create_cart(request):
 
 def home(request):
     categories = Category.objects.filter(parent=None).exclude(slug='')[:8]
-    featured_products = Product.objects.filter(featured=True).exclude(slug='')[:12]
-    latest_products = Product.objects.exclude(slug='')[:20]
+    featured_products = Product.objects.filter(featured=True, is_active=True, stock__gt=0).exclude(slug='')[:12]
+    latest_products = Product.objects.filter(is_active=True, stock__gt=0).exclude(slug='')[:20]
     # Хиты продаж - товары с наибольшим рейтингом
-    bestsellers = Product.objects.exclude(slug='').order_by('-rating', '-reviews_count')[:12]
+    bestsellers = Product.objects.filter(is_active=True, stock__gt=0).exclude(slug='').order_by('-rating', '-reviews_count')[:12]
     banners = Banner.objects.filter(is_active=True)
     sponsors = Sponsor.objects.filter(is_active=True)
     advantages = Advantage.objects.filter(is_active=True)
@@ -56,7 +56,7 @@ def home(request):
 
 def product_list(request, category_slug=None):
     category = None
-    products = Product.objects.exclude(slug='')
+    products = Product.objects.filter(is_active=True, stock__gt=0).exclude(slug='')
     
     if category_slug:
         category = get_object_or_404(Category, slug=category_slug)
@@ -74,12 +74,12 @@ def product_list(request, category_slug=None):
             Q(description_uz__icontains=search_query)
         )
     
-    # Фильтр по наличию
-    in_stock = request.GET.get('in_stock', '')
-    if in_stock == 'yes':
-        products = products.filter(stock__gt=0)
-    elif in_stock == 'no':
-        products = products.filter(stock=0)
+    # Фильтр по наличию (убрали, так как теперь показываем только товары в наличии)
+    # in_stock = request.GET.get('in_stock', '')
+    # if in_stock == 'yes':
+    #     products = products.filter(stock__gt=0)
+    # elif in_stock == 'no':
+    #     products = products.filter(stock=0)
     
     # Фильтр по цене
     price_min = request.GET.get('price_min', '')
@@ -114,7 +114,6 @@ def product_list(request, category_slug=None):
         'products': products,
         'search_query': search_query,
         'sort_by': sort_by,
-        'in_stock': in_stock,
         'price_min': price_min,
         'price_max': price_max,
         'all_categories': all_categories,
@@ -123,8 +122,8 @@ def product_list(request, category_slug=None):
 
 
 def product_detail(request, slug):
-    product = get_object_or_404(Product, slug=slug)
-    related_products = Product.objects.filter(category=product.category).exclude(id=product.id).exclude(slug='')[:8]
+    product = get_object_or_404(Product, slug=slug, is_active=True, stock__gt=0)
+    related_products = Product.objects.filter(category=product.category, is_active=True, stock__gt=0).exclude(id=product.id).exclude(slug='')[:8]
     attributes = product.attributes.all()
     
     context = {
@@ -146,17 +145,45 @@ def cart_view(request):
 @require_POST
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    
+    # Проверяем наличие товара на складе
+    if product.stock <= 0:
+        return JsonResponse({
+            'success': False,
+            'message': 'Товар отсутствует на складе'
+        }, status=400)
+    
+    # Получаем количество из POST (если передано, иначе 1)
+    requested_quantity = int(request.POST.get('quantity', 1))
+    if requested_quantity <= 0:
+        requested_quantity = 1
+    
     cart = get_or_create_cart(request)
     
     cart_item, created = CartItem.objects.get_or_create(
         cart=cart,
         product=product,
-        defaults={'quantity': 1}
+        defaults={'quantity': requested_quantity}
     )
     
     if not created:
-        cart_item.quantity += 1
+        # Проверяем, не превышает ли новое количество остаток на складе
+        new_quantity = cart_item.quantity + requested_quantity
+        if new_quantity > product.stock:
+            return JsonResponse({
+                'success': False,
+                'message': f'На складе доступно только {product.stock} шт. этого товара. В корзине уже {cart_item.quantity} шт.'
+            }, status=400)
+        cart_item.quantity = new_quantity
         cart_item.save()
+    else:
+        # Если товар только что добавлен, проверяем запрошенное количество
+        if requested_quantity > product.stock:
+            cart_item.delete()  # Удаляем, если количество превышает stock
+            return JsonResponse({
+                'success': False,
+                'message': f'На складе доступно только {product.stock} шт. этого товара'
+            }, status=400)
     
     return JsonResponse({
         'success': True,
@@ -170,18 +197,34 @@ def update_cart_item(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id)
     quantity = int(request.POST.get('quantity', 1))
     
-    if quantity > 0:
-        cart_item.quantity = quantity
-        cart_item.save()
-    else:
+    if quantity <= 0:
         cart_item.delete()
+        cart = cart_item.cart
+        return JsonResponse({
+            'success': True,
+            'cart_items_count': cart.total_items,
+            'cart_total': float(cart.total_price),
+            'item_total': 0
+        })
+    
+    # Проверяем, не превышает ли количество остаток на складе
+    if quantity > cart_item.product.stock:
+        return JsonResponse({
+            'success': False,
+            'message': f'На складе доступно только {cart_item.product.stock} шт. этого товара',
+            'max_quantity': cart_item.product.stock
+        }, status=400)
+    
+    cart_item.quantity = quantity
+    cart_item.save()
     
     cart = cart_item.cart
     return JsonResponse({
         'success': True,
         'cart_items_count': cart.total_items,
         'cart_total': float(cart.total_price),
-        'item_total': float(cart_item.total_price)
+        'item_total': float(cart_item.total_price),
+        'max_quantity': cart_item.product.stock
     })
 
 
@@ -206,6 +249,23 @@ def checkout(request):
         return redirect('cart')
     
     if request.method == 'POST':
+        # Проверяем наличие всех товаров на складе перед созданием заказа
+        unavailable_items = []
+        for cart_item in cart.items.all():
+            if cart_item.quantity > cart_item.product.stock:
+                unavailable_items.append({
+                    'product': cart_item.product.get_name(),
+                    'requested': cart_item.quantity,
+                    'available': cart_item.product.stock
+                })
+        
+        if unavailable_items:
+            error_message = 'Некоторые товары недоступны в запрошенном количестве:\n'
+            for item in unavailable_items:
+                error_message += f"- {item['product']}: запрошено {item['requested']}, доступно {item['available']}\n"
+            messages.error(request, error_message)
+            return redirect('cart')
+        
         order = Order.objects.create(
             session_key=request.session.session_key,
             first_name=request.POST.get('first_name'),
@@ -228,6 +288,10 @@ def checkout(request):
                 price=cart_item.product.price
             )
             order_items_text.append(f"{cart_item.product.get_name()} x{cart_item.quantity} - {cart_item.product.price} сум")
+            
+            # Уменьшаем остаток на складе
+            cart_item.product.stock -= cart_item.quantity
+            cart_item.product.save(update_fields=['stock'])
         
         # Отправка email уведомления
         try:

@@ -56,7 +56,14 @@ function addToCart(productId, quantity = 1) {
         },
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(data => {
+                throw new Error(data.message || 'Ошибка при добавлении товара');
+            });
+        }
+        return response.json();
+    })
     .then(data => {
         if (data.success) {
             // Update cart count
@@ -82,18 +89,30 @@ function addToCart(productId, quantity = 1) {
             
             // Show success message
             showMessage('Товар добавлен в корзину!', 'success');
+        } else {
+            // Show error message from server
+            if (data.message) {
+                showMessage(data.message, 'error');
+            }
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showMessage('Ошибка при добавлении товара', 'error');
+        showMessage(error.message || 'Ошибка при добавлении товара', 'error');
     });
 }
 
 function updateCartItem(itemId, delta) {
     const quantityInput = document.getElementById(`qty-${itemId}`);
     const currentQuantity = parseInt(quantityInput.value);
-    const newQuantity = Math.max(1, currentQuantity + delta);
+    const maxStock = parseInt(quantityInput.getAttribute('data-stock')) || 999999;
+    const newQuantity = Math.max(1, Math.min(maxStock, currentQuantity + delta));
+    
+    // Если пытаемся увеличить, но уже достигли максимума
+    if (delta > 0 && newQuantity >= maxStock && currentQuantity >= maxStock) {
+        showMessage(`На складе доступно только ${maxStock} шт. этого товара`, 'error');
+        return;
+    }
     
     const formData = new FormData();
     formData.append('quantity', newQuantity);
@@ -109,6 +128,12 @@ function updateCartItem(itemId, delta) {
     .then(data => {
         if (data.success) {
             quantityInput.value = newQuantity;
+            
+            // Update max attribute if server returned max_quantity
+            if (data.max_quantity !== undefined) {
+                quantityInput.setAttribute('max', data.max_quantity);
+                quantityInput.setAttribute('data-stock', data.max_quantity);
+            }
             
             // Update item total
             const itemTotal = document.querySelector(`[data-item-id="${itemId}"] .item-total-price`);
@@ -147,6 +172,17 @@ function updateCartItem(itemId, delta) {
                     badge.textContent = data.cart_items_count;
                     cartIcon.appendChild(badge);
                 }
+            }
+        } else {
+            // Show error message from server
+            if (data.message) {
+                showMessage(data.message, 'error');
+            }
+            // Update max attribute if server returned max_quantity
+            if (data.max_quantity !== undefined) {
+                quantityInput.setAttribute('max', data.max_quantity);
+                quantityInput.setAttribute('data-stock', data.max_quantity);
+                quantityInput.value = Math.min(parseInt(quantityInput.value), data.max_quantity);
             }
         }
     })

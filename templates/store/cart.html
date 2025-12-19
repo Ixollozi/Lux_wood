@@ -28,7 +28,7 @@
                 </div>
                 <div class="cart-item-quantity">
                     <button class="qty-btn" onclick="updateCartItem({{ item.id }}, -1)">-</button>
-                    <input type="number" value="{{ item.quantity }}" min="1" id="qty-{{ item.id }}" readonly>
+                    <input type="number" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}" id="qty-{{ item.id }}" data-stock="{{ item.product.stock }}" readonly>
                     <button class="qty-btn" onclick="updateCartItem({{ item.id }}, 1)">+</button>
                 </div>
                 <div class="cart-item-total">

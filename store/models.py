@@ -98,6 +98,7 @@ class Product(SlugMixin, MultilingualMixin, models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания', db_index=True)
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
     featured = models.BooleanField(default=False, verbose_name='Рекомендуемый', db_index=True)
+    is_active = models.BooleanField(default=True, verbose_name='Активен', db_index=True, help_text='Неактивные товары не отображаются на сайте')
     
     class Meta:
         verbose_name = 'Товар'
@@ -109,6 +110,7 @@ class Product(SlugMixin, MultilingualMixin, models.Model):
             models.Index(fields=['-rating', '-reviews_count']),
             models.Index(fields=['-created_at']),
             models.Index(fields=['stock']),
+            models.Index(fields=['is_active']),
         ]
     
     def __str__(self):
@@ -136,6 +138,11 @@ class Product(SlugMixin, MultilingualMixin, models.Model):
         if not self.slug:
             base_slug = slugify(self.name_ru)
             self.slug = self.generate_unique_slug(base_slug, Product)
+        
+        # Автоматически устанавливаем is_active = False, если товара нет на складе
+        if self.stock <= 0:
+            self.is_active = False
+        
         super().save(*args, **kwargs)
     
     @property
