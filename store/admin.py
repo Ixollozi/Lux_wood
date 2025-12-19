@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from django.utils.safestring import mark_safe
 from django.urls import reverse
 from django.db.models import Count, Sum, Avg
 from django.contrib import messages
@@ -85,48 +84,28 @@ class CategoryAdmin(admin.ModelAdmin):
     )
     
     def name_display(self, obj):
-        if not obj:
-            return '-'
         return format_html(
             '<strong>{}</strong><br>'
             '<span style="color: #666; font-size: 0.9em;">EN: {}</span><br>'
             '<span style="color: #666; font-size: 0.9em;">UZ: {}</span>',
-            obj.name_ru or '-',
+            obj.name_ru,
             obj.name_en or '-',
             obj.name_uz or '-'
         )
     name_display.short_description = 'Название'
     
     def image_preview(self, obj):
-        if not obj or not obj.pk:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.image:
-            try:
-                if hasattr(obj.image, 'url'):
-                    image_url = obj.image.url
-                    edit_url = reverse('admin:store_category_change', args=[obj.pk])
-                    return format_html(
-                        '<a href="{}" title="Нажмите для редактирования" style="display: inline-block;">'
-                        '<img src="{}" style="max-height: 50px; max-width: 50px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 1px solid #ddd; display: block;" alt="Превью" />'
-                        '</a>',
-                        edit_url, image_url
-                    )
-            except (AttributeError, ValueError, Exception):
-                return mark_safe('<span style="color: #d32f2f;">Ошибка загрузки</span>')
-        return mark_safe('<span style="color: #999;">Нет изображения</span>')
+            return format_html('<img src="{}" style="max-height: 50px; max-width: 50px; object-fit: cover; border-radius: 4px;" />', obj.image.url)
+        return '-'
     image_preview.short_description = 'Изображение'
     
     def products_count(self, obj):
-        if not obj or not obj.pk:
-            return mark_safe('<span style="color: #999;">-</span>')
-        try:
-            count = obj.products.count()
-            if count > 0:
-                url = reverse('admin:store_product_changelist') + f'?category__id__exact={obj.id}'
-                return format_html('<a href="{}">{}</a>', url, count)
-            return mark_safe('<span style="color: #999;">0</span>')
-        except Exception:
-            return mark_safe('<span style="color: #999;">-</span>')
+        count = obj.products.count()
+        if count > 0:
+            url = reverse('admin:store_product_changelist') + f'?category__id__exact={obj.id}'
+            return format_html('<a href="{}">{}</a>', url, count)
+        return 0
     products_count.short_description = 'Товаров'
 
 
@@ -137,11 +116,8 @@ class ProductImageInline(admin.TabularInline):
     readonly_fields = ('image_preview',)
     
     def image_preview(self, obj):
-        if obj and obj.pk and obj.image:
-            try:
-                return format_html('<img src="{}" style="max-height: 100px; max-width: 100px; object-fit: cover; border-radius: 4px;" />', obj.image.url)
-            except (AttributeError, ValueError):
-                return 'Изображение появится после сохранения'
+        if obj.pk and obj.image:
+            return format_html('<img src="{}" style="max-height: 100px; max-width: 100px; object-fit: cover; border-radius: 4px;" />', obj.image.url)
         return 'Изображение появится после сохранения'
     image_preview.short_description = 'Превью'
 
@@ -193,40 +169,23 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ('image_preview',)
     
     def name_display(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         return format_html(
             '<strong>{}</strong><br>'
             '<span style="color: #666; font-size: 0.85em;">EN: {}</span><br>'
             '<span style="color: #666; font-size: 0.85em;">UZ: {}</span>',
-            obj.name_ru or '-',
+            obj.name_ru,
             obj.name_en or '-',
             obj.name_uz or '-'
         )
     name_display.short_description = 'Название'
     
     def image_preview(self, obj):
-        if not obj or not obj.pk:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.image:
-            try:
-                if hasattr(obj.image, 'url'):
-                    image_url = obj.image.url
-                    edit_url = reverse('admin:store_product_change', args=[obj.pk])
-                    return format_html(
-                        '<a href="{}" title="Нажмите для редактирования" style="display: inline-block;">'
-                        '<img src="{}" style="max-height: 60px; max-width: 60px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 1px solid #ddd; display: block;" alt="Превью" />'
-                        '</a>',
-                        edit_url, image_url
-                    )
-            except (AttributeError, ValueError, Exception):
-                return mark_safe('<span style="color: #d32f2f;">Ошибка загрузки</span>')
-        return mark_safe('<span style="color: #999;">Нет изображения</span>')
+            return format_html('<img src="{}" style="max-height: 60px; max-width: 60px; object-fit: cover; border-radius: 4px;" />', obj.image.url)
+        return '-'
     image_preview.short_description = 'Изображение'
     
     def price_display(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.old_price:
             discount = obj.discount_percent
             return format_html(
@@ -239,23 +198,19 @@ class ProductAdmin(admin.ModelAdmin):
     price_display.short_description = 'Цена'
     
     def rating_display(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.rating > 0:
             stars = '★' * int(obj.rating) + '☆' * (5 - int(obj.rating))
             return format_html(
                 '<span style="color: #ffa726;">{}</span> {} ({})',
                 stars, obj.rating, obj.reviews_count
             )
-        return mark_safe('<span style="color: #999;">-</span>')
+        return '-'
     rating_display.short_description = 'Рейтинг'
     
     def featured_badge(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.featured:
-            return mark_safe('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">★ Рекомендуемый</span>')
-        return mark_safe('<span style="color: #999;">-</span>')
+            return format_html('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">★ Рекомендуемый</span>')
+        return '-'
     featured_badge.short_description = 'Статус'
 
 
@@ -269,63 +224,30 @@ class CartAdmin(admin.ModelAdmin):
     list_filter = ['created_at', 'updated_at']
     
     def session_key_short(self, obj):
-        if not obj or not obj.session_key:
-            return mark_safe('<span style="color: #999;">-</span>')
-        key = obj.session_key
-        if len(key) > 20:
-            return format_html('{}...', key[:20])
-        return format_html('{}', key)
+        return obj.session_key[:20] + '...' if len(obj.session_key) > 20 else obj.session_key
     session_key_short.short_description = 'Сессия'
     
     def total_price_display(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         return format_html('<span style="font-weight: bold; color: #1976d2;">{}  сум</span>', obj.total_price)
     total_price_display.short_description = 'Сумма'
     
     def items_list(self, obj):
-        if not obj:
-            return 'Корзина пуста'
-        try:
-            items = obj.items.all()
-            if items:
-                html_parts = ['<ul style="margin: 0; padding-left: 20px;">']
-                for item in items:
-                    if item and item.product:
-                        try:
-                            product_url = reverse('admin:store_product_change', args=[item.product.pk])
-                            html_parts.append(format_html(
-                                '<li><a href="{}">{}</a> x{} = {} сум</li>',
-                                product_url, item.product.name_ru or '-', item.quantity, item.total_price
-                            ))
-                        except Exception:
-                            html_parts.append(format_html(
-                                '<li>{} x{} = {} сум</li>',
-                                item.product.name_ru or '-', item.quantity, item.total_price
-                            ))
-                html_parts.append('</ul>')
-                return mark_safe(''.join(str(part) for part in html_parts))
-        except Exception:
-            pass
+        items = obj.items.all()
+        if items:
+            html = '<ul style="margin: 0; padding-left: 20px;">'
+            for item in items:
+                html += f'<li>{item.product.get_name()} x{item.quantity} = {item.total_price} сум</li>'
+            html += '</ul>'
+            return format_html(html)
         return 'Корзина пуста'
     items_list.short_description = 'Товары'
 
 
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
-    list_display = ['product_link', 'cart', 'quantity', 'total_price_display']
+    list_display = ['product', 'cart', 'quantity', 'total_price_display']
     list_filter = ['cart']
-    search_fields = ['product__name_ru', 'product__name_en', 'product__name_uz']
-    
-    def product_link(self, obj):
-        if obj and obj.product:
-            try:
-                url = reverse('admin:store_product_change', args=[obj.product.pk])
-                return format_html('<a href="{}">{}</a>', url, obj.product.name_ru or '-')
-            except Exception:
-                return format_html('<span>{}</span>', str(obj.product.name_ru) if obj.product and obj.product.name_ru else '-')
-        return mark_safe('<span style="color: #999;">-</span>')
-    product_link.short_description = 'Товар'
+    search_fields = ['product__name']
     
     def total_price_display(self, obj):
         return format_html('<span style="font-weight: bold;">{}  сум</span>', obj.total_price)
@@ -376,28 +298,22 @@ class OrderAdmin(admin.ModelAdmin):
     )
     
     def customer_info(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         return format_html(
             '<strong>{}</strong><br><span style="color: #666;">{}</span>',
-            f'{obj.first_name or ""} {obj.last_name or ""}'.strip() or '-',
-            f'#{obj.id}' if obj.id else '-'
+            f'{obj.first_name} {obj.last_name}',
+            f'#{obj.id}'
         )
     customer_info.short_description = 'Клиент'
     
     def contact_info(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         return format_html(
             '{}<br><span style="color: #666; font-size: 0.9em;">{}</span>',
-            obj.email or '-',
-            obj.phone or '-'
+            obj.email,
+            obj.phone
         )
     contact_info.short_description = 'Контакты'
     
     def status_badge(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         colors = {
             'pending': '#ff9800',
             'processing': '#2196f3',
@@ -415,7 +331,7 @@ class OrderAdmin(admin.ModelAdmin):
         color = colors.get(obj.status, '#999')
         return format_html(
             '<span style="background: {}; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.85em; font-weight: 500;">{}</span>',
-            color, status_names.get(obj.status, obj.status or '-')
+            color, status_names.get(obj.status, obj.status)
         )
     status_badge.short_description = 'Статус'
     
@@ -424,68 +340,32 @@ class OrderAdmin(admin.ModelAdmin):
     total_price_display.short_description = 'Сумма'
     
     def items_count(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
-        try:
-            count = obj.items.count()
-            return format_html('<span style="color: #666;">{} шт.</span>', count)
-        except Exception:
-            return mark_safe('<span style="color: #999;">-</span>')
+        count = obj.items.count()
+        return format_html('<span style="color: #666;">{} шт.</span>', count)
     items_count.short_description = 'Товаров'
     
     def items_list(self, obj):
-        if not obj:
-            return 'Нет товаров'
-        try:
-            items = obj.items.all()
-            if items:
-                html_parts = ['<div style="margin-top: 10px;"><strong>Товары в заказе:</strong><ul style="margin: 10px 0; padding-left: 20px;">']
-                for item in items:
-                    if item and item.product:
-                        try:
-                            product_url = reverse('admin:store_product_change', args=[item.product.pk])
-                            html_parts.append(format_html(
-                                '<li><a href="{}">{}</a> x{} = {} сум</li>',
-                                product_url, item.product.name_ru or '-', item.quantity, item.total_price
-                            ))
-                        except Exception:
-                            html_parts.append(format_html(
-                                '<li>{} x{} = {} сум</li>',
-                                item.product.name_ru or '-', item.quantity, item.total_price
-                            ))
-                html_parts.append('</ul></div>')
-                return mark_safe(''.join(str(part) for part in html_parts))
-        except Exception:
-            pass
+        items = obj.items.all()
+        if items:
+            html = '<div style="margin-top: 10px;"><strong>Товары в заказе:</strong><ul style="margin: 10px 0; padding-left: 20px;">'
+            for item in items:
+                html += f'<li>{item.product.get_name()} x{item.quantity} = {item.total_price} сум</li>'
+            html += '</ul></div>'
+            return format_html(html)
         return 'Нет товаров'
     items_list.short_description = 'Состав заказа'
 
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ['order_link', 'product_link', 'quantity', 'price', 'total_price_display']
+    list_display = ['order_link', 'product', 'quantity', 'price', 'total_price_display']
     list_filter = ['order']
-    search_fields = ['product__name_ru', 'product__name_en', 'product__name_uz', 'order__id']
+    search_fields = ['product__name', 'order__id']
     
     def order_link(self, obj):
-        if obj and obj.order:
-            try:
-                url = reverse('admin:store_order_change', args=[obj.order.pk])
-                return format_html('<a href="{}">Заказ #{}</a>', url, obj.order.id)
-            except Exception:
-                return format_html('<span>Заказ #{}</span>', obj.order.id if obj.order else '-')
-        return mark_safe('<span style="color: #999;">-</span>')
+        url = reverse('admin:store_order_change', args=[obj.order.pk])
+        return format_html('<a href="{}">Заказ #{}</a>', url, obj.order.id)
     order_link.short_description = 'Заказ'
-    
-    def product_link(self, obj):
-        if obj and obj.product:
-            try:
-                url = reverse('admin:store_product_change', args=[obj.product.pk])
-                return format_html('<a href="{}">{}</a>', url, obj.product.name_ru or '-')
-            except Exception:
-                return format_html('<span>{}</span>', str(obj.product.name_ru) if obj.product and obj.product.name_ru else '-')
-        return mark_safe('<span style="color: #999;">-</span>')
-    product_link.short_description = 'Товар'
     
     def total_price_display(self, obj):
         return format_html('<span style="font-weight: bold;">{}  сум</span>', obj.total_price)
@@ -517,44 +397,26 @@ class BannerAdmin(admin.ModelAdmin):
     )
     
     def title_display(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         return format_html(
             '<strong>{}</strong><br>'
             '<span style="color: #666; font-size: 0.85em;">EN: {}</span><br>'
             '<span style="color: #666; font-size: 0.85em;">UZ: {}</span>',
-            obj.title_ru or '-',
+            obj.title_ru,
             obj.title_en or '-',
             obj.title_uz or '-'
         )
     title_display.short_description = 'Заголовок'
     
     def image_preview(self, obj):
-        if not obj or not obj.pk:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.image:
-            try:
-                # Проверяем, что файл действительно существует
-                if hasattr(obj.image, 'url'):
-                    image_url = obj.image.url
-                    edit_url = reverse('admin:store_banner_change', args=[obj.pk])
-                    return format_html(
-                        '<a href="{}" title="Нажмите для редактирования" style="display: inline-block;">'
-                        '<img src="{}" style="max-height: 60px; max-width: 100px; object-fit: cover; border-radius: 4px; cursor: pointer; border: 1px solid #ddd; display: block;" alt="Превью" />'
-                        '</a>',
-                        edit_url, image_url
-                    )
-            except (AttributeError, ValueError, Exception) as e:
-                return format_html('<span style="color: #d32f2f;">Ошибка: {}</span>', str(e)[:50])
-        return mark_safe('<span style="color: #999;">Нет изображения</span>')
+            return format_html('<img src="{}" style="max-height: 60px; max-width: 100px; object-fit: cover; border-radius: 4px;" />', obj.image.url)
+        return '-'
     image_preview.short_description = 'Изображение'
     
     def is_active_badge(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.is_active:
-            return mark_safe('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Активен</span>')
-        return mark_safe('<span style="background: #999; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Неактивен</span>')
+            return format_html('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Активен</span>')
+        return format_html('<span style="background: #999; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Неактивен</span>')
     is_active_badge.short_description = 'Статус'
 
 
@@ -583,51 +445,32 @@ class SponsorAdmin(admin.ModelAdmin):
     )
     
     def name_display(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         return format_html(
             '<strong>{}</strong><br>'
             '<span style="color: #666; font-size: 0.85em;">EN: {}</span><br>'
             '<span style="color: #666; font-size: 0.85em;">UZ: {}</span>',
-            obj.name_ru or '-',
+            obj.name_ru,
             obj.name_en or '-',
             obj.name_uz or '-'
         )
     name_display.short_description = 'Название'
     
     def logo_preview(self, obj):
-        if not obj or not obj.pk:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.logo:
-            try:
-                if hasattr(obj.logo, 'url'):
-                    logo_url = obj.logo.url
-                    edit_url = reverse('admin:store_sponsor_change', args=[obj.pk])
-                    return format_html(
-                        '<a href="{}" title="Нажмите для редактирования" style="display: inline-block;">'
-                        '<img src="{}" style="max-height: 50px; max-width: 100px; object-fit: contain; border-radius: 4px; cursor: pointer; border: 1px solid #ddd; display: block;" alt="Превью" />'
-                        '</a>',
-                        edit_url, logo_url
-                    )
-            except (AttributeError, ValueError, Exception):
-                return mark_safe('<span style="color: #d32f2f;">Ошибка загрузки</span>')
-        return mark_safe('<span style="color: #999;">Нет логотипа</span>')
+            return format_html('<img src="{}" style="max-height: 50px; max-width: 100px; object-fit: contain; border-radius: 4px;" />', obj.logo.url)
+        return '-'
     logo_preview.short_description = 'Логотип'
     
     def is_active_badge(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.is_active:
-            return mark_safe('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Активен</span>')
-        return mark_safe('<span style="background: #999; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Неактивен</span>')
+            return format_html('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Активен</span>')
+        return format_html('<span style="background: #999; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Неактивен</span>')
     is_active_badge.short_description = 'Статус'
     
     def website_link(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.website:
-            return format_html('<a href="{}" target="_blank" rel="noopener noreferrer">Открыть</a>', obj.website)
-        return mark_safe('<span style="color: #999;">-</span>')
+            return format_html('<a href="{}" target="_blank">Открыть</a>', obj.website)
+        return '-'
     website_link.short_description = 'Сайт'
 
 
@@ -654,13 +497,11 @@ class FAQCategoryAdmin(admin.ModelAdmin):
     )
     
     def name_display(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         return format_html(
             '<strong>{}</strong><br>'
             '<span style="color: #666; font-size: 0.85em;">EN: {}</span><br>'
             '<span style="color: #666; font-size: 0.85em;">UZ: {}</span>',
-            obj.name_ru or '-',
+            obj.name_ru,
             obj.name_en or '-',
             obj.name_uz or '-'
         )
@@ -692,20 +533,16 @@ class FAQAdmin(admin.ModelAdmin):
     )
     
     def question_short(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
-        question = obj.question_ru or ''
+        question = obj.question_ru
         if len(question) > 60:
-            return format_html('{}...', question[:60])
-        return format_html('{}', question)
+            return question[:60] + '...'
+        return question
     question_short.short_description = 'Вопрос'
     
     def is_active_badge(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.is_active:
-            return mark_safe('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Активен</span>')
-        return mark_safe('<span style="background: #999; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Неактивен</span>')
+            return format_html('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Активен</span>')
+        return format_html('<span style="background: #999; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Неактивен</span>')
     is_active_badge.short_description = 'Статус'
 
 
@@ -768,13 +605,11 @@ class AdvantageAdmin(admin.ModelAdmin):
     )
     
     def title_display(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         return format_html(
             '<strong>{}</strong><br>'
             '<span style="color: #666; font-size: 0.85em;">EN: {}</span><br>'
             '<span style="color: #666; font-size: 0.85em;">UZ: {}</span>',
-            obj.title_ru or '-',
+            obj.title_ru,
             obj.title_en or '-',
             obj.title_uz or '-'
         )
@@ -787,19 +622,15 @@ class AdvantageAdmin(admin.ModelAdmin):
         js = ('admin/js/icon_helper.js',)
     
     def icon_display(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.icon:
             return format_html('<i class="{}" style="font-size: 1.5em;"></i>', obj.icon)
-        return mark_safe('<span style="color: #999;">-</span>')
+        return '-'
     icon_display.short_description = 'Иконка'
     
     def is_active_badge(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.is_active:
-            return mark_safe('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Активен</span>')
-        return mark_safe('<span style="background: #999; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Неактивен</span>')
+            return format_html('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Активен</span>')
+        return format_html('<span style="background: #999; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">Неактивен</span>')
     is_active_badge.short_description = 'Статус'
     
     def get_form(self, request, obj=None, **kwargs):
@@ -834,26 +665,22 @@ class AdvantageAdmin(admin.ModelAdmin):
             ('fas fa-fire', 'Огонь'),
         ]
         
-        html_parts = [
-            '<div class="icon-helper-container">',
-            '<p><strong>Популярные иконки Font Awesome:</strong></p>',
-            '<div class="icon-helper-grid">'
-        ]
+        html = '<div class="icon-helper-container">'
+        html += '<p><strong>Популярные иконки Font Awesome:</strong></p>'
+        html += '<div class="icon-helper-grid">'
         for icon_class, description in icons:
-            html_parts.append(format_html(
+            html += format_html(
                 '<div class="icon-helper-item" data-icon="{}">'
                 '<i class="{}"></i>'
                 '<span class="icon-helper-name">{}</span>'
                 '<span class="icon-helper-class">{}</span>'
                 '</div>',
                 icon_class, icon_class, description, icon_class
-            ))
-        html_parts.extend([
-            '</div>',
-            '<p class="icon-helper-note">Нажмите на иконку, чтобы скопировать класс в поле выше</p>',
-            '</div>'
-        ])
-        return mark_safe(''.join(str(part) for part in html_parts))
+            )
+        html += '</div>'
+        html += '<p class="icon-helper-note">Нажмите на иконку, чтобы скопировать класс в поле выше</p>'
+        html += '</div>'
+        return format_html(html)
 
 
 @admin.register(ContactMessage)
@@ -877,26 +704,19 @@ class ContactMessageAdmin(admin.ModelAdmin):
     )
     
     def subject_short(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
-        subject = obj.subject or ''
-        if len(subject) > 40:
-            return format_html('{}...', subject[:40])
-        return format_html('{}', subject)
+        if len(obj.subject) > 40:
+            return obj.subject[:40] + '...'
+        return obj.subject
     subject_short.short_description = 'Тема'
     
     def is_read_badge(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
         if obj.is_read:
-            return mark_safe('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">✓ Прочитано</span>')
-        return mark_safe('<span style="background: #ff9800; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">● Новое</span>')
+            return format_html('<span style="background: #4caf50; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">✓ Прочитано</span>')
+        return format_html('<span style="background: #ff9800; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.85em;">● Новое</span>')
     is_read_badge.short_description = 'Статус'
     
     def formatted_message(self, obj):
-        if not obj:
-            return mark_safe('<span style="color: #999;">-</span>')
-        return format_html('<div style="padding: 15px; background: #f5f5f5; border-radius: 4px; white-space: pre-wrap;">{}</div>', obj.message or '')
+        return format_html('<div style="padding: 15px; background: #f5f5f5; border-radius: 4px; white-space: pre-wrap;">{}</div>', obj.message)
     formatted_message.short_description = 'Текст сообщения'
 
 

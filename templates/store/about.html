@@ -2,176 +2,66 @@
 {% load static %}
 {% load i18n %}
 
-{% block title %}{% trans "О нас" %} - LuxWood{% endblock %}
+{% block title %}{% trans "О нас" %} - ShopExpress{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="about-hero">
-    <div class="container">
-        <div class="about-hero-content">
-            {% if company_info and company_info.logo %}
-            <div class="about-hero-logo">
-                <img src="{{ company_info.logo.url }}" alt="{{ company_info.name|default:'LuxWood' }}">
-            </div>
-            {% endif %}
-            <h1 class="about-hero-title">{{ company_info.name_ru|default:'LuxWood' }}</h1>
-            {% if company_info and company_info.about_text_ru %}
-            <p class="about-hero-subtitle">{{ company_info.about_text_ru|truncatewords:30 }}</p>
-            {% endif %}
-        </div>
-    </div>
-</section>
-
 <div class="container">
-    <!-- Main About Section -->
-    {% if company_info %}
-    <div class="about-main-section">
-        {% if company_info.about_text_ru %}
-        <div class="about-card about-intro">
-            <div class="about-card-icon">
-                <i class="fas fa-building"></i>
-            </div>
-            <h2 class="about-card-title">{% trans "О компании" %}</h2>
-            <div class="about-card-content">
-                {{ company_info.about_text_ru|linebreaks }}
-            </div>
-        </div>
-        {% endif %}
-
-        {% if company_info.mission_ru %}
-        <div class="about-card about-mission">
-            <div class="about-card-icon">
-                <i class="fas fa-bullseye"></i>
-            </div>
-            <h2 class="about-card-title">{% trans "Наша миссия" %}</h2>
-            <div class="about-card-content">
-                {{ company_info.mission_ru|linebreaks }}
-            </div>
-        </div>
-        {% endif %}
-
-        {% if company_info.values_ru %}
-        <div class="about-card about-values">
-            <div class="about-card-icon">
-                <i class="fas fa-heart"></i>
-            </div>
-            <h2 class="about-card-title">{% trans "Наши ценности" %}</h2>
-            <div class="about-card-content">
-                {{ company_info.values_ru|linebreaks }}
-            </div>
-        </div>
-        {% endif %}
-
-        {% if company_info.history_ru %}
-        <div class="about-card about-history">
-            <div class="about-card-icon">
-                <i class="fas fa-history"></i>
-            </div>
-            <h2 class="about-card-title">{% trans "История компании" %}</h2>
-            <div class="about-card-content">
-                {{ company_info.history_ru|linebreaks }}
-            </div>
-        </div>
-        {% endif %}
+    <div class="page-header">
+        <h1>{% trans "О нас" %}</h1>
     </div>
 
-    <!-- Contact & Location Info -->
-    {% if company_info.address_ru or company_info.phone or company_info.email %}
-    <div class="about-contact-section">
-        <h2 class="section-title">{% trans "Наши контакты" %}</h2>
-        <div class="about-contact-grid">
-            {% if company_info.address_ru %}
-            <div class="about-contact-card">
-                <div class="about-contact-icon">
-                    <i class="fas fa-map-marker-alt"></i>
+    <div class="about-content">
+        {% if company_info %}
+            {% if company_info.logo %}
+            <div class="company-logo">
+                <img src="{{ company_info.logo.url }}" alt="{{ company_info.name|default:'ShopExpress' }}">
+            </div>
+            {% endif %}
+
+            <div class="about-section">
+                <h2>{{ company_info.name|default:'ShopExpress' }}</h2>
+                {% if company_info.about_text %}
+                <div class="about-text">
+                    {{ company_info.about_text|linebreaks }}
                 </div>
-                <h3>{% trans "Адрес" %}</h3>
-                <p>{{ company_info.address_ru }}</p>
-                {% if company_info.city_ru %}
-                <p class="about-contact-city">{{ company_info.city_ru }}</p>
                 {% endif %}
             </div>
-            {% endif %}
 
-            {% if company_info.phone %}
-            <div class="about-contact-card">
-                <div class="about-contact-icon">
-                    <i class="fas fa-phone"></i>
+            {% if company_info.mission %}
+            <div class="about-section">
+                <h2>{% trans "Наша миссия" %}</h2>
+                <div class="about-text">
+                    {{ company_info.mission|linebreaks }}
                 </div>
-                <h3>{% trans "Телефон" %}</h3>
-                <p><a href="tel:{{ company_info.phone }}">{{ company_info.phone }}</a></p>
             </div>
             {% endif %}
 
-            {% if company_info.email %}
-            <div class="about-contact-card">
-                <div class="about-contact-icon">
-                    <i class="fas fa-envelope"></i>
+            {% if company_info.values %}
+            <div class="about-section">
+                <h2>{% trans "Наши ценности" %}</h2>
+                <div class="about-text">
+                    {{ company_info.values|linebreaks }}
                 </div>
-                <h3>{% trans "Email" %}</h3>
-                <p><a href="mailto:{{ company_info.email }}">{{ company_info.email }}</a></p>
             </div>
             {% endif %}
 
-            {% if company_info.working_hours_ru %}
-            <div class="about-contact-card">
-                <div class="about-contact-icon">
-                    <i class="fas fa-clock"></i>
+            {% if company_info.history %}
+            <div class="about-section">
+                <h2>{% trans "История компании" %}</h2>
+                <div class="about-text">
+                    {{ company_info.history|linebreaks }}
                 </div>
-                <h3>{% trans "Режим работы" %}</h3>
-                <p>{{ company_info.working_hours_ru }}</p>
             </div>
             {% endif %}
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Social Media -->
-    {% if company_info.facebook or company_info.instagram or company_info.telegram or company_info.twitter %}
-    <div class="about-social-section">
-        <h2 class="section-title">{% trans "Мы в социальных сетях" %}</h2>
-        <div class="about-social-links">
-            {% if company_info.facebook %}
-            <a href="{{ company_info.facebook }}" target="_blank" rel="noopener noreferrer" class="about-social-link">
-                <i class="fab fa-facebook-f"></i>
-                <span>Facebook</span>
-            </a>
-            {% endif %}
-            {% if company_info.instagram %}
-            <a href="{{ company_info.instagram }}" target="_blank" rel="noopener noreferrer" class="about-social-link">
-                <i class="fab fa-instagram"></i>
-                <span>Instagram</span>
-            </a>
-            {% endif %}
-            {% if company_info.telegram %}
-            <a href="{{ company_info.telegram }}" target="_blank" rel="noopener noreferrer" class="about-social-link">
-                <i class="fab fa-telegram-plane"></i>
-                <span>Telegram</span>
-            </a>
-            {% endif %}
-            {% if company_info.twitter %}
-            <a href="{{ company_info.twitter }}" target="_blank" rel="noopener noreferrer" class="about-social-link">
-                <i class="fab fa-twitter"></i>
-                <span>Twitter</span>
-            </a>
-            {% endif %}
-        </div>
-    </div>
-    {% endif %}
-    {% else %}
-    <!-- Default Content -->
-    <div class="about-main-section">
-        <div class="about-card about-intro">
-            <div class="about-card-icon">
-                <i class="fas fa-building"></i>
+        {% else %}
+            <div class="about-section">
+                <h2>ShopExpress</h2>
+                <div class="about-text">
+                    <p>{% trans "Информация о компании будет добавлена в ближайшее время." %}</p>
+                </div>
             </div>
-            <h2 class="about-card-title">LuxWood</h2>
-            <div class="about-card-content">
-                <p>{% trans "Информация о компании будет добавлена в ближайшее время." %}</p>
-            </div>
-        </div>
+        {% endif %}
     </div>
-    {% endif %}
 </div>
 {% endblock %}
 
