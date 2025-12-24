@@ -68,12 +68,12 @@
                 {% for item in cart.items.all %}
                 <div class="order-item">
                     <span>{{ item.product.name }} x{{ item.quantity }}</span>
-                    <span>{{ item.total_price }} сум</span>
+                    <span>{% blocktrans with price=item.total_price %}{{ price }} сум{% endblocktrans %}</span>
                 </div>
                 {% endfor %}
                 <div class="summary-total">
                     <span>{% trans "Итого" %}:</span>
-                    <span class="total-price">{{ cart.total_price }} сум</span>
+                    <span class="total-price">{% blocktrans with price=cart.total_price %}{{ price }} сум{% endblocktrans %}</span>
                 </div>
             </div>
         </div>

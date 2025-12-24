@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.db.models import Q
-from django.utils.translation import activate, get_language
+from django.utils.translation import activate, get_language, gettext as _
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
@@ -150,7 +150,7 @@ def add_to_cart(request, product_id):
     if product.stock <= 0:
         return JsonResponse({
             'success': False,
-            'message': 'Товар отсутствует на складе'
+            'message': _('Товар отсутствует на складе')
         }, status=400)
     
     # Получаем количество из POST (если передано, иначе 1)
@@ -172,7 +172,10 @@ def add_to_cart(request, product_id):
         if new_quantity > product.stock:
             return JsonResponse({
                 'success': False,
-                'message': f'На складе доступно только {product.stock} шт. этого товара. В корзине уже {cart_item.quantity} шт.'
+                'message': _('На складе доступно только %(stock)s шт. этого товара. В корзине уже %(quantity)s шт.') % {
+                    'stock': product.stock,
+                    'quantity': cart_item.quantity
+                }
             }, status=400)
         cart_item.quantity = new_quantity
         cart_item.save()
@@ -182,13 +185,13 @@ def add_to_cart(request, product_id):
             cart_item.delete()  # Удаляем, если количество превышает stock
             return JsonResponse({
                 'success': False,
-                'message': f'На складе доступно только {product.stock} шт. этого товара'
+                'message': _('На складе доступно только %(stock)s шт. этого товара') % {'stock': product.stock}
             }, status=400)
     
     return JsonResponse({
         'success': True,
         'cart_items_count': cart.total_items,
-        'message': 'Товар добавлен в корзину'
+        'message': _('Товар добавлен в корзину')
     })
 
 
@@ -211,7 +214,7 @@ def update_cart_item(request, item_id):
     if quantity > cart_item.product.stock:
         return JsonResponse({
             'success': False,
-            'message': f'На складе доступно только {cart_item.product.stock} шт. этого товара',
+            'message': _('На складе доступно только %(stock)s шт. этого товара') % {'stock': cart_item.product.stock},
             'max_quantity': cart_item.product.stock
         }, status=400)
     
@@ -260,9 +263,13 @@ def checkout(request):
                 })
         
         if unavailable_items:
-            error_message = 'Некоторые товары недоступны в запрошенном количестве:\n'
+            error_message = _('Некоторые товары недоступны в запрошенном количестве:') + '\n'
             for item in unavailable_items:
-                error_message += f"- {item['product']}: запрошено {item['requested']}, доступно {item['available']}\n"
+                error_message += _('- %(product)s: запрошено %(requested)s, доступно %(available)s') % {
+                    'product': item['product'],
+                    'requested': item['requested'],
+                    'available': item['available']
+                } + '\n'
             messages.error(request, error_message)
             return redirect('cart')
         
@@ -434,8 +441,13 @@ def contact(request):
             recipient_email = company_info.email if company_info else settings.DEFAULT_FROM_EMAIL
             if recipient_email:
                 send_mail(
-                    subject=f'Новое сообщение: {subject}',
-                    message=f'От: {name} ({email})\nТелефон: {phone}\n\n{message}',
+                    subject=_('Новое сообщение: %(subject)s') % {'subject': subject},
+                    message=_('От: %(name)s (%(email)s)\nТелефон: %(phone)s\n\n%(message)s') % {
+                        'name': name,
+                        'email': email,
+                        'phone': phone or _('не указан'),
+                        'message': message
+                    },
                     from_email=settings.DEFAULT_FROM_EMAIL if hasattr(settings, 'DEFAULT_FROM_EMAIL') else email,
                     recipient_list=[recipient_email],
                     fail_silently=True,
@@ -443,7 +455,6 @@ def contact(request):
         except Exception:
             pass
         
-        from django.utils.translation import gettext as _
         messages.success(request, _('Ваше сообщение успешно отправлено!'))
         return redirect('contact')
     

@@ -24,7 +24,7 @@
                 </div>
                 <div class="cart-item-info">
                     <h3>{% if item.product.slug %}<a href="{% url 'product_detail' item.product.slug %}">{{ item.product.name }}</a>{% else %}{{ item.product.name }}{% endif %}</h3>
-                    <p class="cart-item-price">{{ item.product.price }} сум</p>
+                    <p class="cart-item-price">{% blocktrans with price=item.product.price %}{{ price }} сум{% endblocktrans %}</p>
                 </div>
                 <div class="cart-item-quantity">
                     <button class="qty-btn" onclick="updateCartItem({{ item.id }}, -1)">-</button>
@@ -32,7 +32,7 @@
                     <button class="qty-btn" onclick="updateCartItem({{ item.id }}, 1)">+</button>
                 </div>
                 <div class="cart-item-total">
-                    <span class="item-total-price">{{ item.total_price }} сум</span>
+                    <span class="item-total-price">{% blocktrans with price=item.total_price %}{{ price }} сум{% endblocktrans %}</span>
                 </div>
                 <div class="cart-item-remove">
                     <button class="btn-remove" onclick="removeCartItem({{ item.id }})">
@@ -52,7 +52,7 @@
                 </div>
                 <div class="summary-row">
                     <span>{% trans "Сумма" %}:</span>
-                    <span class="total-price" id="cart-total">{{ cart.total_price }} сум</span>
+                    <span class="total-price" id="cart-total">{% blocktrans with price=cart.total_price %}{{ price }} сум{% endblocktrans %}</span>
                 </div>
                 <a href="{% url 'checkout' %}" class="btn btn-primary btn-large btn-block">
                     {% trans "Оформить заказ" %}

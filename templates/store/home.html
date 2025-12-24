@@ -81,16 +81,16 @@
                         {% endif %}
                     </div>
                     <div class="product-info">
-                        <h3 class="product-name">{{ product.name|truncatewords:8 }} <span class="product-stock">({{ product.stock }} шт.)</span></h3>
+                        <h3 class="product-name">{{ product.name|truncatewords:8 }}</h3>
                         <div class="product-rating">
                             <span class="stars">★</span>
                             <span class="rating-value">{{ product.rating }}</span>
                             <span class="rating-text">({{ product.reviews_count }})</span>
                         </div>
                         <div class="product-price">
-                            <span class="current-price">{{ product.price }} сум</span>
+                            <span class="current-price">{% blocktrans with price=product.price %}{{ price }} сум{% endblocktrans %}</span>
                             {% if product.old_price %}
-                            <span class="old-price">{{ product.old_price }} сум</span>
+                            <span class="old-price">{% blocktrans with price=product.old_price %}{{ price }} сум{% endblocktrans %}</span>
                             {% endif %}
                         </div>
                     </div>
@@ -129,16 +129,16 @@
                         {% endif %}
                     </div>
                     <div class="product-info">
-                        <h3 class="product-name">{{ product.name|truncatewords:8 }} <span class="product-stock">({{ product.stock }} шт.)</span></h3>
+                        <h3 class="product-name">{{ product.name|truncatewords:8 }}</h3>
                         <div class="product-rating">
                             <span class="stars">★</span>
                             <span class="rating-value">{{ product.rating }}</span>
                             <span class="rating-text">({{ product.reviews_count }})</span>
                         </div>
                         <div class="product-price">
-                            <span class="current-price">{{ product.price }} сум</span>
+                            <span class="current-price">{% blocktrans with price=product.price %}{{ price }} сум{% endblocktrans %}</span>
                             {% if product.old_price %}
-                            <span class="old-price">{{ product.old_price }} сум</span>
+                            <span class="old-price">{% blocktrans with price=product.old_price %}{{ price }} сум{% endblocktrans %}</span>
                             {% endif %}
                         </div>
                     </div>
@@ -177,16 +177,16 @@
                         {% endif %}
                     </div>
                     <div class="product-info">
-                        <h3 class="product-name">{{ product.name|truncatewords:8 }} <span class="product-stock">({{ product.stock }} шт.)</span></h3>
+                        <h3 class="product-name">{{ product.name|truncatewords:8 }}</h3>
                         <div class="product-rating">
                             <span class="stars">★</span>
                             <span class="rating-value">{{ product.rating }}</span>
                             <span class="rating-text">({{ product.reviews_count }})</span>
                         </div>
                         <div class="product-price">
-                            <span class="current-price">{{ product.price }} сум</span>
+                            <span class="current-price">{% blocktrans with price=product.price %}{{ price }} сум{% endblocktrans %}</span>
                             {% if product.old_price %}
-                            <span class="old-price">{{ product.old_price }} сум</span>
+                            <span class="old-price">{% blocktrans with price=product.old_price %}{{ price }} сум{% endblocktrans %}</span>
                             {% endif %}
                         </div>
                     </div>

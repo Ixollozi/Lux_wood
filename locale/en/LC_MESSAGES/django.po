@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LuxWood 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-30 04:46+0500\n"
+"POT-Creation-Date: 2025-12-24 12:29+0500\n"
 "PO-Revision-Date: 2025-11-30 04:46+0500\n"
 "Last-Translator: LuxWood Team\n"
 "Language-Team: English\n"
@@ -17,29 +17,125 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+#: .\store\views.py:153
+#, fuzzy
+#| msgid "Изображение отсутствует"
+msgid "Товар отсутствует на складе"
+msgstr "Image not available"
+
+#: .\store\views.py:175
+#, python-format
+msgid ""
+"На складе доступно только %(stock)s шт. этого товара. В корзине уже "
+"%(quantity)s шт."
+msgstr "Only %(stock)s pcs. of this product are available in stock. Cart already has %(quantity)s pcs."
+
+#: .\store\views.py:188 .\store\views.py:217
+#, python-format
+msgid "На складе доступно только %(stock)s шт. этого товара"
+msgstr "Only %(stock)s pcs. of this product are available in stock"
+
+#: .\store\views.py:194
+msgid "Товар добавлен в корзину"
+msgstr "Product added to cart"
+
+#: .\store\views.py:266
+msgid "Некоторые товары недоступны в запрошенном количестве:"
+msgstr "Some products are not available in the requested quantity:"
+
+#: .\store\views.py:268
+#, python-format
+msgid "- %(product)s: запрошено %(requested)s, доступно %(available)s"
+msgstr "- %(product)s: requested %(requested)s, available %(available)s"
+
+#: .\store\views.py:444
+#, python-format
+msgid "Новое сообщение: %(subject)s"
+msgstr "New message: %(subject)s"
+
+#: .\store\views.py:445
+#, python-format
+msgid ""
+"От: %(name)s (%(email)s)\n"
+"Телефон: %(phone)s\n"
+"\n"
+"%(message)s"
+msgstr "From: %(name)s (%(email)s)\nPhone: %(phone)s\n\n%(message)s"
+
+#: .\store\views.py:448
+msgid "не указан"
+msgstr "not specified"
+
+#: .\store\views.py:458
+#, fuzzy
+#| msgid "Заказ успешно оформлен!"
+msgid "Ваше сообщение успешно отправлено!"
+msgstr "Order successfully placed!"
+
 #: .\templates\admin\base_site.html:4
 msgid "Django site admin"
 msgstr "Django site admin"
 
-#: .\templates\store\about.html:5 .\templates\store\about.html:10
-#: .\templates\store\base.html:70 .\templates\store\base.html:99
-#: .\templates\store\base.html:108
+#: .\templates\store\about.html:5 .\templates\store\base.html:70
+#: .\templates\store\base.html:99 .\templates\store\base.html:108
 msgid "О нас"
 msgstr "About Us"
 
-#: .\templates\store\about.html:32
+#: .\templates\store\about.html:34
+#, fuzzy
+#| msgid "История компании"
+msgid "О компании"
+msgstr "Company History"
+
+#: .\templates\store\about.html:46
 msgid "Наша миссия"
 msgstr "Our Mission"
 
-#: .\templates\store\about.html:41
+#: .\templates\store\about.html:58
 msgid "Наши ценности"
 msgstr "Our Values"
 
-#: .\templates\store\about.html:50
+#: .\templates\store\about.html:70
 msgid "История компании"
 msgstr "Company History"
 
-#: .\templates\store\about.html:60
+#: .\templates\store\about.html:81
+#, fuzzy
+#| msgid "Контакты"
+msgid "Наши контакты"
+msgstr "Contacts"
+
+#: .\templates\store\about.html:88 .\templates\store\contact.html:22
+#: .\templates\store\contact.html:64
+msgid "Адрес"
+msgstr "Address"
+
+#: .\templates\store\about.html:101 .\templates\store\base.html:117
+#: .\templates\store\base.html:120 .\templates\store\checkout.html:34
+#: .\templates\store\contact.html:36 .\templates\store\contact.html:72
+#: .\templates\store\contact.html:118
+msgid "Телефон"
+msgstr "Phone"
+
+#: .\templates\store\about.html:111 .\templates\store\base.html:116
+#: .\templates\store\base.html:119 .\templates\store\contact.html:44
+#: .\templates\store\contact.html:80
+msgid "Email"
+msgstr "Email"
+
+#: .\templates\store\about.html:121
+#, fuzzy
+#| msgid "График работы"
+msgid "Режим работы"
+msgstr "Working Hours"
+
+#: .\templates\store\about.html:132
+#, fuzzy
+#| msgid "Социальные сети"
+msgid "Мы в социальных сетях"
+msgstr "Social Networks"
+
+#: .\templates\store\about.html:170
 msgid "Информация о компании будет добавлена в ближайшее время."
 msgstr "Company information will be added soon."
 
@@ -89,19 +185,6 @@ msgstr "Learn more about the company"
 msgid "Покупателям"
 msgstr "For Customers"
 
-#: .\templates\store\base.html:116 .\templates\store\base.html:119
-#: .\templates\store\contact.html:43 .\templates\store\contact.html:80
-#: .\templates\store\contact.html:116
-msgid "Email"
-msgstr "Email"
-
-#: .\templates\store\base.html:117 .\templates\store\base.html:120
-#: .\templates\store\checkout.html:34 .\templates\store\contact.html:35
-#: .\templates\store\contact.html:72 .\templates\store\contact.html:108
-#: .\templates\store\contact.html:154
-msgid "Телефон"
-msgstr "Phone"
-
 #: .\templates\store\base.html:122
 msgid "Связаться с нами"
 msgstr "Contact Us"
@@ -109,6 +192,21 @@ msgstr "Contact Us"
 #: .\templates\store\base.html:125
 msgid "Социальные сети"
 msgstr "Social Networks"
+
+#: .\templates\store\cart.html:27 .\templates\store\cart.html:35
+#: .\templates\store\cart.html:55 .\templates\store\checkout.html:71
+#: .\templates\store\checkout.html:76 .\templates\store\home.html:91
+#: .\templates\store\home.html:93 .\templates\store\home.html:139
+#: .\templates\store\home.html:141 .\templates\store\home.html:187
+#: .\templates\store\home.html:189 .\templates\store\product_detail.html:43
+#: .\templates\store\product_detail.html:45
+#: .\templates\store\product_detail.html:119
+#: .\templates\store\product_detail.html:121
+#: .\templates\store\product_list.html:112
+#: .\templates\store\product_list.html:114
+#, python-format
+msgid "%(price)s сум"
+msgstr "%(price)s UZS"
 
 #: .\templates\store\cart.html:48 .\templates\store\checkout.html:75
 msgid "Итого"
@@ -146,7 +244,7 @@ msgstr "Checkout"
 msgid "Данные получателя"
 msgstr "Recipient Information"
 
-#: .\templates\store\checkout.html:19 .\templates\store\contact.html:146
+#: .\templates\store\checkout.html:19 .\templates\store\contact.html:110
 msgid "Имя"
 msgstr "First Name"
 
@@ -186,37 +284,31 @@ msgstr "Your Order"
 msgid "Свяжитесь с нами"
 msgstr "Contact Us"
 
-#: .\templates\store\contact.html:27 .\templates\store\contact.html:64
-#: .\templates\store\contact.html:100
-msgid "Адрес"
-msgstr "Address"
-
-#: .\templates\store\contact.html:52 .\templates\store\contact.html:89
+#: .\templates\store\contact.html:53
 msgid "График работы"
 msgstr "Working Hours"
 
-#: .\templates\store\contact.html:101
+#: .\templates\store\contact.html:65
 msgid "Москва"
 msgstr "Moscow"
 
-#: .\templates\store\contact.html:142
+#: .\templates\store\contact.html:106
 msgid "Форма обратной связи"
 msgstr "Contact Form"
 
-#: .\templates\store\contact.html:158
+#: .\templates\store\contact.html:122
 msgid "Тема"
 msgstr "Subject"
 
-#: .\templates\store\contact.html:162
+#: .\templates\store\contact.html:126
 msgid "Сообщение"
 msgstr "Message"
 
-#: .\templates\store\contact.html:165
+#: .\templates\store\contact.html:129
 msgid "Отправить"
 msgstr "Send"
 
-#: .\templates\store\contact.html:174 .\templates\store\contact.html:196
-#: .\templates\store\contact.html:204 .\templates\store\contact.html:225
+#: .\templates\store\contact.html:137 .\templates\store\contact.html:154
 msgid "Мы на карте"
 msgstr "We on the Map"
 
@@ -244,9 +336,15 @@ msgstr "Product Categories"
 msgid "Сейчас популярно"
 msgstr "Currently Popular"
 
+#: .\templates\store\home.html:84 .\templates\store\home.html:132
+#: .\templates\store\home.html:180 .\templates\store\product_list.html:105
+#, python-format
+msgid "%(stock)s шт."
+msgstr "%(stock)s pcs."
+
 #: .\templates\store\home.html:99 .\templates\store\home.html:147
 #: .\templates\store\home.html:195 .\templates\store\product_detail.html:127
-#: .\templates\store\product_list.html:141
+#: .\templates\store\product_list.html:120
 msgid "В корзину"
 msgstr "Add to Cart"
 
@@ -254,7 +352,7 @@ msgstr "Add to Cart"
 msgid "Хиты продаж"
 msgstr "Bestsellers"
 
-#: .\templates\store\home.html:161 .\templates\store\product_list.html:96
+#: .\templates\store\home.html:161 .\templates\store\product_list.html:75
 msgid "Новинки"
 msgstr "New Arrivals"
 
@@ -313,7 +411,6 @@ msgid "В наличии (%(stock)s шт.)"
 msgstr "In Stock (%(stock)s pcs.)"
 
 #: .\templates\store\product_detail.html:54
-#: .\templates\store\product_list.html:56
 msgid "Нет в наличии"
 msgstr "Out of Stock"
 
@@ -343,49 +440,46 @@ msgid "Результаты поиска"
 msgstr "Search Results"
 
 #: .\templates\store\product_list.html:42
-msgid "Наличие"
-msgstr "Availability"
-
-#: .\templates\store\product_list.html:54
-msgid "Все"
-msgstr "All"
-
-#: .\templates\store\product_list.html:55
-msgid "В наличии"
-msgstr "In Stock"
-
-#: .\templates\store\product_list.html:63
 msgid "Цена"
 msgstr "Price"
 
-#: .\templates\store\product_list.html:72
+#: .\templates\store\product_list.html:51
 msgid "От"
 msgstr "From"
 
-#: .\templates\store\product_list.html:73
+#: .\templates\store\product_list.html:52
 msgid "До"
 msgstr "To"
 
-#: .\templates\store\product_list.html:74
+#: .\templates\store\product_list.html:53
 msgid "Применить"
 msgstr "Apply"
 
-#: .\templates\store\product_list.html:81
+#: .\templates\store\product_list.html:60
 msgid "Сортировка"
 msgstr "Sort By"
 
-#: .\templates\store\product_list.html:97
+#: .\templates\store\product_list.html:76
 msgid "Цена: по возрастанию"
 msgstr "Price: Low to High"
 
-#: .\templates\store\product_list.html:98
+#: .\templates\store\product_list.html:77
 msgid "Цена: по убыванию"
 msgstr "Price: High to Low"
 
-#: .\templates\store\product_list.html:99
+#: .\templates\store\product_list.html:78
 msgid "По рейтингу"
 msgstr "By Rating"
 
-#: .\templates\store\product_list.html:149
+#: .\templates\store\product_list.html:128
 msgid "Товары не найдены"
 msgstr "Products not found"
+
+#~ msgid "Наличие"
+#~ msgstr "Availability"
+
+#~ msgid "Все"
+#~ msgstr "All"
+
+#~ msgid "В наличии"
+#~ msgstr "In Stock"

@@ -40,9 +40,9 @@
             </div>
 
             <div class="product-price-large">
-                <span class="current-price">{{ product.price }} сум</span>
+                <span class="current-price">{% blocktrans with price=product.price %}{{ price }} сум{% endblocktrans %}</span>
                 {% if product.old_price %}
-                <span class="old-price">{{ product.old_price }} сум</span>
+                <span class="old-price">{% blocktrans with price=product.old_price %}{{ price }} сум{% endblocktrans %}</span>
                 <span class="discount-text">{% blocktrans with percent=product.discount_percent %}Скидка {{ percent }}%{% endblocktrans %}</span>
                 {% endif %}
             </div>
@@ -116,9 +116,9 @@
                             <span class="rating-text">({{ product.reviews_count }})</span>
                         </div>
                         <div class="product-price">
-                            <span class="current-price">{{ product.price }} сум</span>
+                            <span class="current-price">{% blocktrans with price=product.price %}{{ price }} сум{% endblocktrans %}</span>
                             {% if product.old_price %}
-                            <span class="old-price">{{ product.old_price }} сум</span>
+                            <span class="old-price">{% blocktrans with price=product.old_price %}{{ price }} сум{% endblocktrans %}</span>
                             {% endif %}
                         </div>
                     </div>

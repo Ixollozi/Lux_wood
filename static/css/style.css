@@ -724,6 +724,9 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .product-card:hover {
@@ -769,6 +772,9 @@ body {
 
 .product-info {
     padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .product-name {
@@ -814,6 +820,7 @@ body {
     align-items: center;
     gap: 10px;
     margin-bottom: 10px;
+    margin-top: auto;
 }
 
 .current-price {
@@ -839,6 +846,8 @@ body {
     font-size: 14px;
     font-weight: 500;
     transition: background 0.3s;
+    margin-top: auto;
+    flex-shrink: 0;
 }
 
 .btn-add-cart:hover {
@@ -1875,19 +1884,24 @@ body {
     .main-nav {
         padding: 8px 0;
         overflow-x: auto;
+        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
     }
     
     .main-nav::-webkit-scrollbar {
-        display: none;
+        display: none; /* Chrome, Safari, Opera */
         width: 0;
         height: 0;
     }
     
     .main-nav .container {
         padding: 0 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-width: 100%;
+        width: 100%;
     }
     
     .nav-menu {
@@ -1898,10 +1912,12 @@ body {
         margin: 0;
         min-width: max-content;
         flex-wrap: nowrap;
+        white-space: nowrap;
     }
     
     .nav-menu li {
         flex-shrink: 0;
+        white-space: nowrap;
     }
     
     .nav-menu a {
@@ -2229,13 +2245,44 @@ body {
         display: none;
     }
     
+    /* Navigation */
+    .main-nav {
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+    }
+    
+    .main-nav::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+        width: 0;
+        height: 0;
+    }
+    
+    .main-nav .container {
+        overflow-x: auto;
+        overflow-y: hidden;
+        max-width: 100%;
+        width: 100%;
+    }
+    
     .nav-menu {
         gap: 8px;
+        min-width: max-content;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+    }
+    
+    .nav-menu li {
+        flex-shrink: 0;
+        white-space: nowrap;
     }
     
     .nav-menu a {
         padding: 6px 10px;
         font-size: 12px;
+        white-space: nowrap;
     }
     
     .hero-content h2 {

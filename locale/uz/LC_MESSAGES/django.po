@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LuxWood 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-30 04:46+0500\n"
+"POT-Creation-Date: 2025-12-24 12:29+0500\n"
 "PO-Revision-Date: 2025-11-30 04:46+0500\n"
 "Last-Translator: LuxWood Team\n"
 "Language-Team: Uzbek\n"
@@ -17,29 +17,123 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+#: .\store\views.py:153
+msgid "Товар отсутствует на складе"
+msgstr "Mahsulot omborda yo'q"
+
+#: .\store\views.py:175
+#, python-format
+msgid ""
+"На складе доступно только %(stock)s шт. этого товара. В корзине уже "
+"%(quantity)s шт."
+msgstr "Omborda faqat %(stock)s dona mavjud. Savatda allaqachon %(quantity)s dona bor."
+
+#: .\store\views.py:188 .\store\views.py:217
+#, python-format
+msgid "На складе доступно только %(stock)s шт. этого товара"
+msgstr "Omborda faqat %(stock)s dona mavjud"
+
+#: .\store\views.py:194
+msgid "Товар добавлен в корзину"
+msgstr "Mahsulot savatga qo'shildi"
+
+#: .\store\views.py:266
+msgid "Некоторые товары недоступны в запрошенном количестве:"
+msgstr "Ba'zi mahsulotlar so'ralgan miqdorda mavjud emas:"
+
+#: .\store\views.py:268
+#, python-format
+msgid "- %(product)s: запрошено %(requested)s, доступно %(available)s"
+msgstr "- %(product)s: so'ralgan %(requested)s, mavjud %(available)s"
+
+#: .\store\views.py:444
+#, python-format
+msgid "Новое сообщение: %(subject)s"
+msgstr "Yangi xabar: %(subject)s"
+
+#: .\store\views.py:445
+#, python-format
+msgid ""
+"От: %(name)s (%(email)s)\n"
+"Телефон: %(phone)s\n"
+"\n"
+"%(message)s"
+msgstr "Kimdan: %(name)s (%(email)s)\nTelefon: %(phone)s\n\n%(message)s"
+
+#: .\store\views.py:448
+msgid "не указан"
+msgstr "ko'rsatilmagan"
+
+#: .\store\views.py:458
+#, fuzzy
+#| msgid "Заказ успешно оформлен!"
+msgid "Ваше сообщение успешно отправлено!"
+msgstr "Buyurtma muvaffaqiyatli berildi!"
+
 #: .\templates\admin\base_site.html:4
 msgid "Django site admin"
 msgstr "Django sayt ma'muri"
 
-#: .\templates\store\about.html:5 .\templates\store\about.html:10
-#: .\templates\store\base.html:70 .\templates\store\base.html:99
-#: .\templates\store\base.html:108
+#: .\templates\store\about.html:5 .\templates\store\base.html:70
+#: .\templates\store\base.html:99 .\templates\store\base.html:108
 msgid "О нас"
 msgstr "Biz haqimizda"
 
-#: .\templates\store\about.html:32
+#: .\templates\store\about.html:34
+#, fuzzy
+#| msgid "История компании"
+msgid "О компании"
+msgstr "Kompaniya tarixi"
+
+#: .\templates\store\about.html:46
 msgid "Наша миссия"
 msgstr "Bizning missiyamiz"
 
-#: .\templates\store\about.html:41
+#: .\templates\store\about.html:58
 msgid "Наши ценности"
 msgstr "Bizning qadriyatlarimiz"
 
-#: .\templates\store\about.html:50
+#: .\templates\store\about.html:70
 msgid "История компании"
 msgstr "Kompaniya tarixi"
 
-#: .\templates\store\about.html:60
+#: .\templates\store\about.html:81
+#, fuzzy
+#| msgid "Контакты"
+msgid "Наши контакты"
+msgstr "Kontaktlar"
+
+#: .\templates\store\about.html:88 .\templates\store\contact.html:22
+#: .\templates\store\contact.html:64
+msgid "Адрес"
+msgstr "Manzil"
+
+#: .\templates\store\about.html:101 .\templates\store\base.html:117
+#: .\templates\store\base.html:120 .\templates\store\checkout.html:34
+#: .\templates\store\contact.html:36 .\templates\store\contact.html:72
+#: .\templates\store\contact.html:118
+msgid "Телефон"
+msgstr "Telefon"
+
+#: .\templates\store\about.html:111 .\templates\store\base.html:116
+#: .\templates\store\base.html:119 .\templates\store\contact.html:44
+#: .\templates\store\contact.html:80
+msgid "Email"
+msgstr "Email"
+
+#: .\templates\store\about.html:121
+#, fuzzy
+#| msgid "График работы"
+msgid "Режим работы"
+msgstr "Ish vaqti"
+
+#: .\templates\store\about.html:132
+#, fuzzy
+#| msgid "Социальные сети"
+msgid "Мы в социальных сетях"
+msgstr "Ijtimoiy tarmoqlar"
+
+#: .\templates\store\about.html:170
 msgid "Информация о компании будет добавлена в ближайшее время."
 msgstr "Kompaniya haqidagi ma'lumotlar yaqin orada qo'shiladi."
 
@@ -89,19 +183,6 @@ msgstr "Kompaniya haqida ko'proq ma'lumot"
 msgid "Покупателям"
 msgstr "Xaridorlar uchun"
 
-#: .\templates\store\base.html:116 .\templates\store\base.html:119
-#: .\templates\store\contact.html:43 .\templates\store\contact.html:80
-#: .\templates\store\contact.html:116
-msgid "Email"
-msgstr "Email"
-
-#: .\templates\store\base.html:117 .\templates\store\base.html:120
-#: .\templates\store\checkout.html:34 .\templates\store\contact.html:35
-#: .\templates\store\contact.html:72 .\templates\store\contact.html:108
-#: .\templates\store\contact.html:154
-msgid "Телефон"
-msgstr "Telefon"
-
 #: .\templates\store\base.html:122
 msgid "Связаться с нами"
 msgstr "Biz bilan bog'lanish"
@@ -109,6 +190,21 @@ msgstr "Biz bilan bog'lanish"
 #: .\templates\store\base.html:125
 msgid "Социальные сети"
 msgstr "Ijtimoiy tarmoqlar"
+
+#: .\templates\store\cart.html:27 .\templates\store\cart.html:35
+#: .\templates\store\cart.html:55 .\templates\store\checkout.html:71
+#: .\templates\store\checkout.html:76 .\templates\store\home.html:91
+#: .\templates\store\home.html:93 .\templates\store\home.html:139
+#: .\templates\store\home.html:141 .\templates\store\home.html:187
+#: .\templates\store\home.html:189 .\templates\store\product_detail.html:43
+#: .\templates\store\product_detail.html:45
+#: .\templates\store\product_detail.html:119
+#: .\templates\store\product_detail.html:121
+#: .\templates\store\product_list.html:112
+#: .\templates\store\product_list.html:114
+#, python-format
+msgid "%(price)s сум"
+msgstr "%(price)s so'm"
 
 #: .\templates\store\cart.html:48 .\templates\store\checkout.html:75
 msgid "Итого"
@@ -146,7 +242,7 @@ msgstr "Buyurtma berish"
 msgid "Данные получателя"
 msgstr "Oluvchi ma'lumotlari"
 
-#: .\templates\store\checkout.html:19 .\templates\store\contact.html:146
+#: .\templates\store\checkout.html:19 .\templates\store\contact.html:110
 msgid "Имя"
 msgstr "Ism"
 
@@ -186,37 +282,31 @@ msgstr "Sizning buyurtmangiz"
 msgid "Свяжитесь с нами"
 msgstr "Biz bilan bog'laning"
 
-#: .\templates\store\contact.html:27 .\templates\store\contact.html:64
-#: .\templates\store\contact.html:100
-msgid "Адрес"
-msgstr "Manzil"
-
-#: .\templates\store\contact.html:52 .\templates\store\contact.html:89
+#: .\templates\store\contact.html:53
 msgid "График работы"
 msgstr "Ish vaqti"
 
-#: .\templates\store\contact.html:101
+#: .\templates\store\contact.html:65
 msgid "Москва"
 msgstr "Moskva"
 
-#: .\templates\store\contact.html:142
+#: .\templates\store\contact.html:106
 msgid "Форма обратной связи"
 msgstr "Aloqa formasi"
 
-#: .\templates\store\contact.html:158
+#: .\templates\store\contact.html:122
 msgid "Тема"
 msgstr "Mavzu"
 
-#: .\templates\store\contact.html:162
+#: .\templates\store\contact.html:126
 msgid "Сообщение"
 msgstr "Xabar"
 
-#: .\templates\store\contact.html:165
+#: .\templates\store\contact.html:129
 msgid "Отправить"
 msgstr "Yuborish"
 
-#: .\templates\store\contact.html:174 .\templates\store\contact.html:196
-#: .\templates\store\contact.html:204 .\templates\store\contact.html:225
+#: .\templates\store\contact.html:137 .\templates\store\contact.html:154
 msgid "Мы на карте"
 msgstr "Biz xaritada"
 
@@ -244,9 +334,15 @@ msgstr "Mahsulot kategoriyalari"
 msgid "Сейчас популярно"
 msgstr "Hozir mashhur"
 
+#: .\templates\store\home.html:84 .\templates\store\home.html:132
+#: .\templates\store\home.html:180 .\templates\store\product_list.html:105
+#, python-format
+msgid "%(stock)s шт."
+msgstr "%(stock)s dona"
+
 #: .\templates\store\home.html:99 .\templates\store\home.html:147
 #: .\templates\store\home.html:195 .\templates\store\product_detail.html:127
-#: .\templates\store\product_list.html:141
+#: .\templates\store\product_list.html:120
 msgid "В корзину"
 msgstr "Savatga qo'shish"
 
@@ -254,7 +350,7 @@ msgstr "Savatga qo'shish"
 msgid "Хиты продаж"
 msgstr "Sotuv hitlari"
 
-#: .\templates\store\home.html:161 .\templates\store\product_list.html:96
+#: .\templates\store\home.html:161 .\templates\store\product_list.html:75
 msgid "Новинки"
 msgstr "Yangi mahsulotlar"
 
@@ -312,7 +408,6 @@ msgid "В наличии (%(stock)s шт.)"
 msgstr "Omborda (%(stock)s dona)"
 
 #: .\templates\store\product_detail.html:54
-#: .\templates\store\product_list.html:56
 msgid "Нет в наличии"
 msgstr "Omborda yo'q"
 
@@ -342,49 +437,46 @@ msgid "Результаты поиска"
 msgstr "Qidiruv natijalari"
 
 #: .\templates\store\product_list.html:42
-msgid "Наличие"
-msgstr "Mavjudligi"
-
-#: .\templates\store\product_list.html:54
-msgid "Все"
-msgstr "Barchasi"
-
-#: .\templates\store\product_list.html:55
-msgid "В наличии"
-msgstr "Omborda bor"
-
-#: .\templates\store\product_list.html:63
 msgid "Цена"
 msgstr "Narx"
 
-#: .\templates\store\product_list.html:72
+#: .\templates\store\product_list.html:51
 msgid "От"
 msgstr "Dan"
 
-#: .\templates\store\product_list.html:73
+#: .\templates\store\product_list.html:52
 msgid "До"
 msgstr "Gacha"
 
-#: .\templates\store\product_list.html:74
+#: .\templates\store\product_list.html:53
 msgid "Применить"
 msgstr "Qo'llash"
 
-#: .\templates\store\product_list.html:81
+#: .\templates\store\product_list.html:60
 msgid "Сортировка"
 msgstr "Saralash"
 
-#: .\templates\store\product_list.html:97
+#: .\templates\store\product_list.html:76
 msgid "Цена: по возрастанию"
 msgstr "Narx: o'sish bo'yicha"
 
-#: .\templates\store\product_list.html:98
+#: .\templates\store\product_list.html:77
 msgid "Цена: по убыванию"
 msgstr "Narx: kamayish bo'yicha"
 
-#: .\templates\store\product_list.html:99
+#: .\templates\store\product_list.html:78
 msgid "По рейтингу"
 msgstr "Reyting bo'yicha"
 
-#: .\templates\store\product_list.html:149
+#: .\templates\store\product_list.html:128
 msgid "Товары не найдены"
 msgstr "Mahsulotlar topilmadi"
+
+#~ msgid "Наличие"
+#~ msgstr "Mavjudligi"
+
+#~ msgid "Все"
+#~ msgstr "Barchasi"
+
+#~ msgid "В наличии"
+#~ msgstr "Omborda bor"
