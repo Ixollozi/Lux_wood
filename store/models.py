@@ -150,11 +150,6 @@ class Product(SlugMixin, MultilingualMixin, models.Model):
         if self.old_price and self.old_price > self.price:
             return int(((self.old_price - self.price) / self.old_price) * 100)
         return 0
-    
-    @property
-    def is_in_stock(self):
-        """Проверка наличия товара"""
-        return self.stock > 0
 
 
 class ProductImage(models.Model):
@@ -195,10 +190,6 @@ class Cart(models.Model):
     def total_items(self):
         """Общее количество товаров в корзине"""
         return sum(item.quantity for item in self.items.all())
-    
-    def is_empty(self):
-        """Проверка, пуста ли корзина"""
-        return self.items.count() == 0
     
     def is_expired(self):
         """Проверка, истекла ли корзина (старше 30 дней)"""
@@ -698,8 +689,3 @@ class ContactMessage(models.Model):
     
     def __str__(self):
         return f'{self.name} - {self.subject}'
-    
-    def mark_as_read(self):
-        """Пометить сообщение как прочитанное"""
-        self.is_read = True
-        self.save(update_fields=['is_read'])

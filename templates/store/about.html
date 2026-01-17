@@ -14,9 +14,9 @@
                 <img src="{{ company_info.logo.url }}" alt="{{ company_info.name|default:'LuxWood' }}">
             </div>
             {% endif %}
-            <h1 class="about-hero-title">{{ company_info.name_ru|default:'LuxWood' }}</h1>
-            {% if company_info and company_info.about_text_ru %}
-            <p class="about-hero-subtitle">{{ company_info.about_text_ru|truncatewords:30 }}</p>
+            <h1 class="about-hero-title">{{ company_info.name|default:'LuxWood' }}</h1>
+            {% if company_info and company_info.about_text %}
+            <p class="about-hero-subtitle">{{ company_info.about_text|truncatewords:30 }}</p>
             {% endif %}
         </div>
     </div>
@@ -26,69 +26,69 @@
     <!-- Main About Section -->
     {% if company_info %}
     <div class="about-main-section">
-        {% if company_info.about_text_ru %}
+        {% if company_info.about_text %}
         <div class="about-card about-intro">
             <div class="about-card-icon">
                 <i class="fas fa-building"></i>
             </div>
             <h2 class="about-card-title">{% trans "О компании" %}</h2>
             <div class="about-card-content">
-                {{ company_info.about_text_ru|linebreaks }}
+                {{ company_info.about_text|linebreaks }}
             </div>
         </div>
         {% endif %}
 
-        {% if company_info.mission_ru %}
+        {% if company_info.mission %}
         <div class="about-card about-mission">
             <div class="about-card-icon">
                 <i class="fas fa-bullseye"></i>
             </div>
             <h2 class="about-card-title">{% trans "Наша миссия" %}</h2>
             <div class="about-card-content">
-                {{ company_info.mission_ru|linebreaks }}
+                {{ company_info.mission|linebreaks }}
             </div>
         </div>
         {% endif %}
 
-        {% if company_info.values_ru %}
+        {% if company_info.values %}
         <div class="about-card about-values">
             <div class="about-card-icon">
                 <i class="fas fa-heart"></i>
             </div>
             <h2 class="about-card-title">{% trans "Наши ценности" %}</h2>
             <div class="about-card-content">
-                {{ company_info.values_ru|linebreaks }}
+                {{ company_info.values|linebreaks }}
             </div>
         </div>
         {% endif %}
 
-        {% if company_info.history_ru %}
+        {% if company_info.history %}
         <div class="about-card about-history">
             <div class="about-card-icon">
                 <i class="fas fa-history"></i>
             </div>
             <h2 class="about-card-title">{% trans "История компании" %}</h2>
             <div class="about-card-content">
-                {{ company_info.history_ru|linebreaks }}
+                {{ company_info.history|linebreaks }}
             </div>
         </div>
         {% endif %}
     </div>
 
     <!-- Contact & Location Info -->
-    {% if company_info.address_ru or company_info.phone or company_info.email %}
+    {% if company_info.address or company_info.phone or company_info.email %}
     <div class="about-contact-section">
         <h2 class="section-title">{% trans "Наши контакты" %}</h2>
         <div class="about-contact-grid">
-            {% if company_info.address_ru %}
+            {% if company_info.address %}
             <div class="about-contact-card">
                 <div class="about-contact-icon">
                     <i class="fas fa-map-marker-alt"></i>
                 </div>
                 <h3>{% trans "Адрес" %}</h3>
-                <p>{{ company_info.address_ru }}</p>
-                {% if company_info.city_ru %}
-                <p class="about-contact-city">{{ company_info.city_ru }}</p>
+                <p>{{ company_info.address }}</p>
+                {% if company_info.city %}
+                <p class="about-contact-city">{{ company_info.city }}</p>
                 {% endif %}
             </div>
             {% endif %}
@@ -113,13 +113,13 @@
             </div>
             {% endif %}
 
-            {% if company_info.working_hours_ru %}
+            {% if company_info.working_hours %}
             <div class="about-contact-card">
                 <div class="about-contact-icon">
                     <i class="fas fa-clock"></i>
                 </div>
                 <h3>{% trans "Режим работы" %}</h3>
-                <p>{{ company_info.working_hours_ru }}</p>
+                <p>{{ company_info.working_hours }}</p>
             </div>
             {% endif %}
         </div>

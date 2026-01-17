@@ -166,10 +166,10 @@
                 });
                 
                 var myPlacemark = new ymaps.Placemark([{{ company_info.latitude }}, {{ company_info.longitude }}], {
-                    balloonContentHeader: '{{ company_info.name_ru|default:"Lux Wood"|escapejs }}',
-                    balloonContentBody: '{% if company_info.address_ru %}{{ company_info.address_ru|escapejs }}<br>{% endif %}{{ company_info.city_ru|default:"Москва"|escapejs }}',
+                    balloonContentHeader: '{{ company_info.name|default:"Lux Wood"|escapejs }}',
+                    balloonContentBody: '{% if company_info.address %}{{ company_info.address|escapejs }}<br>{% endif %}{{ company_info.city|default:"Москва"|escapejs }}',
                     balloonContentFooter: '{% if company_info.phone %}{{ company_info.phone|escapejs }}{% endif %}',
-                    hintContent: '{{ company_info.name_ru|default:"Lux Wood"|escapejs }}'
+                    hintContent: '{{ company_info.name|default:"Lux Wood"|escapejs }}'
                 }, {
                     preset: 'islands#greenDotIcon'
                 });
